@@ -34,6 +34,9 @@ export default function AIAssistant() {
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
+  if (user && user.role !== 'student') return null;
+
   const handleAction = (action) => {
     setActiveAction(action);
     setLoading(true);

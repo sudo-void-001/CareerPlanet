@@ -67,7 +67,7 @@ export default function Applications() {
             >
               {applications.map(app => {
                 const job = jobMap[app.job_id];
-                const company = COMPANY_NAMES[job?.company_id] || 'Company';
+                const company = job?.company_name || COMPANY_NAMES[job?.company_id] || 'Company';
                 return (
                   <motion.div
                     key={app.id}

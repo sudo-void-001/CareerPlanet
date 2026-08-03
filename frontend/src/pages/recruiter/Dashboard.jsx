@@ -1,20 +1,119 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../api/axios';
 import { StatusBadge } from '../../components/common/UI';
 
 const statusOptions = ['pending', 'reviewing', 'shortlisted', 'rejected', 'hired'];
 
+function PostJobModal({ onClose, onSuccess }) {
+  const [form, setForm] = useState({
+    title: '', company_name: '', location: '', job_type: 'Full Time', salary: '', skills: '', description: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true); setError('');
+    try {
+      await api.post('/jobs/', { ...form, company_id: 1 }); // Backend needs company_id integer as fallback
+      onSuccess();
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Failed to post job. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 16 }}
+          onClick={e => e.stopPropagation()}
+          style={{ background: 'white', borderRadius: 20, width: '100%', maxWidth: 500, overflow: 'hidden', boxShadow: '0 32px 80px rgba(0,0,0,0.2)' }}
+        >
+          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ margin: 0 }}>Post a New Job</h3>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '1.25rem' }}>✕</button>
+          </div>
+          <form onSubmit={handleSubmit} style={{ padding: '1.5rem', maxHeight: '70vh', overflowY: 'auto' }}>
+            {error && <div style={{ background: '#fee2e2', color: '#991b1b', borderRadius: 10, padding: '0.75rem', fontSize: '0.875rem', marginBottom: '1rem' }}>{error}</div>}
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label className="label">Job Title *</label>
+                <input className="input" required value={form.title} onChange={e => setForm({...form, title: e.target.value})} placeholder="e.g. Frontend Engineer" />
+              </div>
+              <div>
+                <label className="label">Company Name *</label>
+                <input className="input" required value={form.company_name} onChange={e => setForm({...form, company_name: e.target.value})} placeholder="e.g. Acme Corp" />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label className="label">Location *</label>
+                  <input className="input" required value={form.location} onChange={e => setForm({...form, location: e.target.value})} placeholder="Remote, India" />
+                </div>
+                <div>
+                  <label className="label">Job Type *</label>
+                  <select className="select" value={form.job_type} onChange={e => setForm({...form, job_type: e.target.value})}>
+                    <option>Full Time</option>
+                    <option>Part Time</option>
+                    <option>Internship</option>
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label className="label">Salary (Optional)</label>
+                  <input className="input" value={form.salary} onChange={e => setForm({...form, salary: e.target.value})} placeholder="e.g. ₹15 LPA" />
+                </div>
+                <div>
+                  <label className="label">Skills *</label>
+                  <input className="input" required value={form.skills} onChange={e => setForm({...form, skills: e.target.value})} placeholder="React, Node, SQL" />
+                </div>
+              </div>
+              <div>
+                <label className="label">Description *</label>
+                <textarea className="input" required value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={4} placeholder="Describe the role..." style={{ resize: 'vertical' }} />
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+              <button type="button" onClick={onClose} className="btn btn-secondary" style={{ flex: 1 }}>Cancel</button>
+              <button type="submit" disabled={submitting} className="btn btn-primary" style={{ flex: 2 }}>
+                {submitting ? 'Posting...' : 'Publish Job'}
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 export default function RecruiterDashboard() {
   const [applications, setApplications] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isPostModalOpen, setPostModalOpen] = useState(false);
+
   const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
 
-  useEffect(() => {
+  const fetchData = () => {
     Promise.all([api.get('/applications/'), api.get('/jobs/')])
       .then(([a, j]) => { setApplications(a.data); setJobs(j.data); })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   const updateStatus = async (appId, status) => {
@@ -29,7 +128,6 @@ export default function RecruiterDashboard() {
 
   const shortlisted = applications.filter(a => a.status === 'shortlisted' || a.status === 'hired').length;
   const pending = applications.filter(a => a.status === 'pending').length;
-  const reviewing = applications.filter(a => a.status === 'reviewing').length;
 
   if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -45,11 +143,16 @@ export default function RecruiterDashboard() {
       <div className="container">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           {/* Header */}
-          <div style={{ marginBottom: '2rem' }}>
-            <h1 style={{ marginBottom: '0.25rem' }}>
-              Good evening, <span className="gradient-text">{user?.full_name?.split(' ')[0] || 'Recruiter'} 👋</span>
-            </h1>
-            <p>Here's your recruitment overview for today</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
+            <div>
+              <h1 style={{ marginBottom: '0.25rem' }}>
+                Good evening, <span className="gradient-text">{user?.full_name?.split(' ')[0] || 'Recruiter'} 👋</span>
+              </h1>
+              <p>Here's your recruitment overview for today</p>
+            </div>
+            <button onClick={() => setPostModalOpen(true)} className="btn btn-primary btn-lg" style={{ boxShadow: '0 8px 24px rgba(99,102,241,0.3)' }}>
+              + Post New Job
+            </button>
           </div>
 
           {/* Stats */}
@@ -135,10 +238,22 @@ export default function RecruiterDashboard() {
                   {job.salary && <span className="badge badge-green">{job.salary}</span>}
                 </div>
               ))}
+              {jobs.length === 0 && (
+                <div style={{ gridColumn: '1/-1', padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                  You haven't posted any jobs yet.
+                </div>
+              )}
             </div>
           </div>
         </motion.div>
       </div>
+
+      {isPostModalOpen && (
+        <PostJobModal 
+          onClose={() => setPostModalOpen(false)} 
+          onSuccess={() => { setPostModalOpen(false); fetchData(); }} 
+        />
+      )}
     </div>
   );
 }

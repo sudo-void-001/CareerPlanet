@@ -13,7 +13,8 @@ class Job(Base):
     skills = Column(String, nullable=True)
     
     # We will just store company_id as an integer for MVP
-    company_id = Column(Integer, nullable=False, index=True)
+    company_name = Column(String, nullable=True)
+    company_id = Column(Integer, nullable=False, index=True, default=1)
     recruiter_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     
     is_active = Column(Boolean, default=True)

@@ -139,11 +139,12 @@ export default function AdminDashboard() {
                   {applications.map(app => {
                     const job = jobMap[app.job_id];
                     const companies = { 1: 'Microsoft', 2: 'Google', 3: 'Amazon', 4: 'TCS' };
+                    const companyName = job?.company_name || companies[job?.company_id] || '—';
                     return (
                       <tr key={app.id}>
                         <td style={{ color: 'var(--text-tertiary)', fontSize: '0.8125rem' }}>#{app.id}</td>
                         <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{job?.title || `Job #${app.job_id}`}</td>
-                        <td style={{ color: 'var(--text-secondary)' }}>{companies[job?.company_id] || '—'}</td>
+                        <td style={{ color: 'var(--text-secondary)' }}>{companyName}</td>
                         <td style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>#{app.student_id}</td>
                         <td><StatusBadge status={app.status} /></td>
                       </tr>

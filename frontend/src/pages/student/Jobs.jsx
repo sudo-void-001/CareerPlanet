@@ -24,7 +24,7 @@ function ApplyModal({ job, onClose, onSuccess }) {
   const [file, setFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const company = COMPANY_NAMES[job.company_id] || 'Company';
+  const company = job.company_name || COMPANY_NAMES[job.company_id] || 'Company';
   const match = getMatchScore(job.skills);
 
   const handleSubmit = async (e) => {
@@ -225,7 +225,7 @@ export default function Jobs() {
           >
             {filtered.map(job => {
               const match = getMatchScore(job.skills);
-              const company = COMPANY_NAMES[job.company_id] || 'Company';
+              const company = job.company_name || COMPANY_NAMES[job.company_id] || 'Company';
               const typeStyle = typeColors[job.job_type] || { bg: '#f3f4f6', color: '#374151' };
 
               return (

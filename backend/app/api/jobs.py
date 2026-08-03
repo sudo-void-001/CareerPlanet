@@ -26,6 +26,7 @@ def create_job(job_in: JobCreate, db: Session = Depends(get_db), current_user: U
         job_type=job_in.job_type,
         salary=job_in.salary,
         skills=job_in.skills,
+        company_name=job_in.company_name,
         company_id=job_in.company_id,
         recruiter_id=current_user.id
     )

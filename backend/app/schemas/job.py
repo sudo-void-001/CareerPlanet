@@ -7,7 +7,8 @@ class JobBase(BaseModel):
     job_type: str
     salary: str | None = None
     skills: str | None = None
-    company_id: int
+    company_name: str
+    company_id: int = 1
 
 class JobCreate(JobBase):
     pass
