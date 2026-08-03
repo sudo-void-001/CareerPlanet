@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Database
+*.sqlite3
+careerverse.db
+
+# User Uploads
+uploads/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Database
+backend/sql_app.db
+*.db
+*.sqlite3
+
+# Python virtual environments
+backend/.venv/
+backend/venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment variables
+.env
