@@ -17,8 +17,19 @@ class User(Base):
     role = Column(SQLEnum(UserRole), default=UserRole.STUDENT, nullable=False)
     is_active = Column(Boolean, default=True)
     
-    # Optional fields based on role
+    # Student fields
     bio = Column(String, nullable=True)
     phone = Column(String, nullable=True)
-    # Recruiter specific
-    company_id = Column(Integer, nullable=True) # Will be foreign key later
+    linkedin_url = Column(String, nullable=True)
+    github_url = Column(String, nullable=True)
+
+
+    # Recruiter company profile
+    company_id = Column(Integer, nullable=True)
+    company_name = Column(String, nullable=True)
+    company_origin = Column(String, nullable=True)   # City, Country
+    company_website = Column(String, nullable=True)
+    company_logo_url = Column(String, nullable=True) # Path to company logo
+
+    # Shared profile
+    avatar_url = Column(String, nullable=True)        # Profile picture path

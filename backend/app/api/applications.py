@@ -5,6 +5,7 @@ from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.user import User, UserRole
 from app.models.application import Application, ApplicationStatus
+from app.models.resume import Resume
 from app.schemas.application import ApplicationCreate, ApplicationOut, ApplicationUpdate
 
 router = APIRouter()
@@ -51,6 +52,38 @@ def get_my_applications_alt(db: Session = Depends(get_db), current_user: User = 
         raise HTTPException(status_code=403, detail="Not a student")
     apps = db.query(Application).filter(Application.student_id == current_user.id).all()
     return apps
+
+@router.get("/{app_id}/detail")
+def get_application_detail(app_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Recruiter/Admin: get full details of an application including student info and resume URL."""
+    if current_user.role not in (UserRole.RECRUITER, UserRole.ADMIN):
+        raise HTTPException(status_code=403, detail="Only recruiters/admins can view application details")
+
+    app = db.query(Application).filter(Application.id == app_id).first()
+    if not app:
+        raise HTTPException(status_code=404, detail="Application not found")
+
+    student = db.query(User).filter(User.id == app.student_id).first()
+    resume = db.query(Resume).filter(Resume.student_id == app.student_id).first()
+
+    import os
+    resume_filename = os.path.basename(resume.file_path) if resume else None
+
+    return {
+        "id": app.id,
+        "job_id": app.job_id,
+        "status": app.status,
+        "student": {
+            "id": student.id if student else None,
+            "name": student.full_name if student else "Unknown",
+            "email": student.email if student else "Unknown",
+        },
+        "resume": {
+            "id": resume.id if resume else None,
+            "filename": resume_filename,
+            "download_url": f"/api/resume/download/{app.student_id}" if resume else None,
+        } if resume else None,
+    }
 
 @router.put("/{app_id}/status", response_model=ApplicationOut)
 def update_application_status(app_id: int, app_update: ApplicationUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):

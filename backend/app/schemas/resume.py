@@ -9,6 +9,7 @@ class ResumeOut(BaseModel):
     match_score: int | None
     missing_skills: str | None
     recommendations: str | None
+    strengths: str | None
 
     class Config:
         from_attributes = True

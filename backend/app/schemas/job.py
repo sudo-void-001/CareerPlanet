@@ -1,14 +1,17 @@
 from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional
 
 class JobBase(BaseModel):
     title: str
     description: str
     location: str
     job_type: str
-    salary: str | None = None
-    skills: str | None = None
+    salary: Optional[str] = None
+    skills: Optional[str] = None
     company_name: str
     company_id: int = 1
+    expires_at: Optional[datetime] = None
 
 class JobCreate(JobBase):
     pass
