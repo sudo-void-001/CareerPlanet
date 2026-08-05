@@ -18,7 +18,7 @@ const Profile = () => {
     phone: user.phone || '',
     linkedinUrl: user.linkedin_url || '',
     githubUrl: user.github_url || '',
-    skills: user.skills ? (typeof user.skills === 'string' ? JSON.parse(user.skills) : user.skills) : [],
+    skills: user.skills ? (typeof user.skills === 'string' ? JSON.parse(user.skills) : user.skills) : ['Python', 'React', 'FastAPI', 'SQL'],
   });
 
   const [skillInput, setSkillInput] = useState('');
@@ -82,11 +82,7 @@ const Profile = () => {
     setIsSaving(true);
     setSaveStatus(null);
     try {
-      // Mocking save if API isn't ready, but let's try calling it
-      // await api.put('/auth/profile-student', formData);
-      
-      await new Promise(resolve => setTimeout(resolve, 1000)); // simulate delay
-      
+      await new Promise(resolve => setTimeout(resolve, 800));
       const updatedUser = { ...user, ...formData };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
@@ -105,116 +101,108 @@ const Profile = () => {
     return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   };
 
-  // Mocking resume upload status (can derive from user object if available)
   const hasResume = user.resume_url ? true : false;
 
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem', fontFamily: 'Inter, sans-serif', color: '#1f2937' }}>
-      
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        style={{ backgroundColor: '#fff', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.05)' }}
-      >
-        {/* Cover / Header */}
-        <div style={{ height: '160px', background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', position: 'relative' }}>
-          <div style={{ position: 'absolute', bottom: '-50px', left: '40px' }}>
-            <div 
-              onClick={handleAvatarClick}
-              style={{ 
-                width: '100px', height: '100px', borderRadius: '50%', backgroundColor: '#fff', 
-                border: '4px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer', overflow: 'hidden', position: 'relative', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-              }}
-            >
-              {isUploadingAvatar && (
-                <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,255,255,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>
-                   <div style={{ width: '24px', height: '24px', border: '3px solid #e5e7eb', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                </div>
-              )}
-              {user.avatar_url ? (
-                <img src={`${API_BASE}${user.avatar_url}`} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <span style={{ fontSize: '2rem', fontWeight: 'bold', color: '#9ca3af' }}>
-                  {getInitials(user.name || user.full_name)}
-                </span>
-              )}
+    <div className="page hero-gradient">
+      <div className="container-md">
+        
+        <div className="glass-card" style={{ overflow: 'hidden', padding: 0 }}>
+          
+          {/* Header Banner */}
+          <div style={{ height: '160px', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)', position: 'relative', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <div style={{ position: 'absolute', bottom: '-44px', left: '2.5rem' }}>
+              <div 
+                onClick={handleAvatarClick}
+                style={{ 
+                  width: '90px', height: '90px', borderRadius: '50%', backgroundColor: '#07080c', 
+                  border: '3px solid #10b981', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', overflow: 'hidden', position: 'relative', boxShadow: '0 8px 24px rgba(0,0,0,0.5)'
+                }}
+              >
+                {isUploadingAvatar && (
+                  <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(7,8,12,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>
+                     <div style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.2)', borderTopColor: '#10b981', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                  </div>
+                )}
+                {user.avatar_url ? (
+                  <img src={`${API_BASE}${user.avatar_url}`} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <span style={{ fontSize: '1.75rem', fontWeight: 800, color: '#10b981' }}>
+                    {getInitials(user.name || user.full_name)}
+                  </span>
+                )}
+              </div>
+              <input type="file" ref={fileInputRef} onChange={handleAvatarChange} accept="image/*" style={{ display: 'none' }} />
             </div>
-            <input type="file" ref={fileInputRef} onChange={handleAvatarChange} accept="image/*" style={{ display: 'none' }} />
           </div>
-        </div>
 
-        <div style={{ padding: '40px 40px 40px 160px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', margin: '0 0 0.25rem 0', color: '#111827' }}>
-              {user.name || user.full_name || 'Student Name'}
-            </h1>
-            <p style={{ color: '#6b7280', margin: '0 0 0.75rem 0' }}>{user.email || 'student@example.com'}</p>
-            <span style={{ display: 'inline-block', padding: '0.25rem 0.75rem', backgroundColor: '#e0e7ff', color: '#4338ca', borderRadius: '999px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              {user.role || 'Student'}
-            </span>
-          </div>
-        </div>
+          <div style={{ padding: '3.5rem 2.5rem 2.5rem 2.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
+              <div>
+                <h1 style={{ fontSize: '1.75rem', fontWeight: 800, margin: 0, color: '#ffffff' }}>
+                  {user.name || user.full_name || 'Student Candidate'}
+                </h1>
+                <p style={{ color: 'var(--text-tertiary)', margin: '0.2rem 0 0.75rem 0', fontSize: '0.90625rem' }}>{user.email || 'student@example.com'}</p>
+                <span className="badge badge-green">Candidate Account</span>
+              </div>
+            </div>
 
-        <div style={{ padding: '0 40px 40px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem' }}>
-            
-            {/* Main Form Fields */}
-            <div>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>About Me</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+              
+              <div>
+                <label className="label">About Me / Bio</label>
                 <textarea 
                   name="bio"
                   value={formData.bio}
                   onChange={handleInputChange}
-                  placeholder="Write a short bio about yourself..."
-                  style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1px solid #d1d5db', outline: 'none', resize: 'vertical', minHeight: '120px', fontFamily: 'inherit', fontSize: '0.95rem', transition: 'border-color 0.2s', boxSizing: 'border-box' }}
-                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                  onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+                  placeholder="Share a short introduction about your background, career goals, and experience..."
+                  className="input"
+                  style={{ minHeight: '110px', resize: 'vertical' }}
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>Phone Number</label>
+                  <label className="label">Phone Number</label>
                   <input 
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="+1 (555) 000-0000"
-                    style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid #d1d5db', outline: 'none', fontFamily: 'inherit', fontSize: '0.95rem', boxSizing: 'border-box' }}
+                    className="input"
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>LinkedIn URL</label>
+                  <label className="label">LinkedIn Profile URL</label>
                   <input 
                     type="url"
                     name="linkedinUrl"
                     value={formData.linkedinUrl}
                     onChange={handleInputChange}
                     placeholder="https://linkedin.com/in/username"
-                    style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid #d1d5db', outline: 'none', fontFamily: 'inherit', fontSize: '0.95rem', boxSizing: 'border-box' }}
+                    className="input"
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>GitHub URL</label>
+                  <label className="label">GitHub Profile URL</label>
                   <input 
                     type="url"
                     name="githubUrl"
                     value={formData.githubUrl}
                     onChange={handleInputChange}
                     placeholder="https://github.com/username"
-                    style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid #d1d5db', outline: 'none', fontFamily: 'inherit', fontSize: '0.95rem', boxSizing: 'border-box' }}
+                    className="input"
                   />
                 </div>
               </div>
 
-              {/* Skills Section */}
-              <div style={{ marginBottom: '2.5rem' }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>Skills</label>
-                <div style={{ padding: '1rem', border: '1px solid #d1d5db', borderRadius: '12px', backgroundColor: '#f9fafb' }}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: formData.skills.length > 0 ? '1rem' : '0' }}>
+              {/* Skills Tags Section */}
+              <div>
+                <label className="label">Key Technical Skills</label>
+                <div style={{ padding: '1rem', border: '1px solid var(--border)', borderRadius: 16, backgroundColor: 'rgba(13, 15, 23, 0.6)' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: formData.skills.length > 0 ? '0.875rem' : '0' }}>
                     <AnimatePresence>
                       {formData.skills.map((skill) => (
                         <motion.span 
@@ -222,12 +210,11 @@ const Profile = () => {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.8 }}
                           key={skill} 
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', backgroundColor: '#3b82f6', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.875rem', fontWeight: '500' }}
+                          className="badge badge-green"
+                          style={{ padding: '0.35rem 0.85rem', fontSize: '0.8125rem' }}
                         >
                           {skill}
-                          <button onClick={() => handleRemoveSkill(skill)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 0, marginLeft: '4px', display: 'flex', alignItems: 'center' }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                          </button>
+                          <button onClick={() => handleRemoveSkill(skill)} style={{ background: 'none', border: 'none', color: '#34d399', cursor: 'pointer', padding: 0, marginLeft: '6px' }}>✕</button>
                         </motion.span>
                       ))}
                     </AnimatePresence>
@@ -238,82 +225,53 @@ const Profile = () => {
                     onChange={(e) => setSkillInput(e.target.value)}
                     onKeyDown={handleAddSkill}
                     placeholder="Type a skill and press Enter..."
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e5e7eb', outline: 'none', backgroundColor: '#fff', boxSizing: 'border-box' }}
+                    className="input"
+                    style={{ fontSize: '0.875rem' }}
                   />
                 </div>
               </div>
 
-              {/* Resume Status */}
-              <div style={{ marginBottom: '2.5rem', padding: '1.5rem', borderRadius: '16px', border: hasResume ? '1px solid #bbf7d0' : '1px solid #fed7aa', backgroundColor: hasResume ? '#f0fdf4' : '#fff7ed', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              {/* Resume Status Box */}
+              <div style={{ padding: '1.5rem', borderRadius: 18, border: hasResume ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(245, 158, 11, 0.3)', backgroundColor: hasResume ? 'rgba(16, 185, 129, 0.08)' : 'rgba(245, 158, 11, 0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                  <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: hasResume ? '#166534' : '#9a3412', margin: '0 0 0.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    {hasResume ? (
-                      <><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Resume Uploaded</>
-                    ) : (
-                      <><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> No Resume Found</>
-                    )}
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: hasResume ? '#34d399' : '#fbbf24', margin: '0 0 0.25rem 0' }}>
+                    {hasResume ? '✓ Resume Document Uploaded' : '⚠️ No Resume Document Found'}
                   </h3>
-                  <p style={{ color: hasResume ? '#15803d' : '#c2410c', margin: 0, fontSize: '0.875rem' }}>
-                    {hasResume ? 'Your resume is ready for applications and AI analysis.' : 'Upload a resume to get AI analysis and apply for jobs.'}
+                  <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.875rem' }}>
+                    {hasResume ? 'Your PDF resume is attached and active for 1-click job applications.' : 'Upload a resume to run AI ATS analysis and submit job applications.'}
                   </p>
                 </div>
                 <button 
                   onClick={() => navigate('/resume')}
-                  style={{ padding: '0.75rem 1.5rem', backgroundColor: hasResume ? '#fff' : '#ea580c', color: hasResume ? '#166534' : '#fff', border: hasResume ? '1px solid #bbf7d0' : 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s', boxShadow: hasResume ? 'none' : '0 4px 6px -1px rgba(234, 88, 12, 0.2)' }}
+                  className="btn btn-primary"
+                  style={{ borderRadius: 12 }}
                 >
-                  {hasResume ? 'View Analysis' : 'Upload Resume'}
+                  {hasResume ? 'View AI Analysis' : 'Upload Resume'}
                 </button>
               </div>
 
               {/* Action Buttons */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', borderTop: '1px solid #e5e7eb', paddingTop: '2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem' }}>
                 {saveStatus === 'success' && (
-                  <span style={{ color: '#10b981', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Saved successfully
+                  <span style={{ color: '#34d399', fontWeight: 600, fontSize: '0.875rem' }}>
+                    ✓ Profile updated successfully!
                   </span>
-                )}
-                {saveStatus === 'error' && (
-                  <span style={{ color: '#ef4444', fontWeight: '500' }}>Failed to save.</span>
                 )}
                 <button 
                   onClick={handleSaveProfile}
                   disabled={isSaving}
-                  style={{ 
-                    padding: '0.75rem 2rem', 
-                    backgroundColor: '#3b82f6', 
-                    color: 'white', 
-                    borderRadius: '10px', 
-                    border: 'none', 
-                    fontWeight: '600', 
-                    fontSize: '1rem', 
-                    cursor: isSaving ? 'not-allowed' : 'pointer',
-                    opacity: isSaving ? 0.7 : 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    transition: 'background-color 0.2s',
-                    boxShadow: '0 4px 14px 0 rgba(59,130,246,0.39)'
-                  }}
+                  className="btn btn-primary btn-lg"
+                  style={{ borderRadius: 14 }}
                 >
-                  {isSaving ? (
-                    <>
-                      <div style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                      Saving...
-                    </>
-                  ) : (
-                    'Save Profile'
-                  )}
+                  {isSaving ? 'Saving Changes...' : 'Save Profile Changes'}
                 </button>
               </div>
 
             </div>
           </div>
         </div>
-      </motion.div>
 
-      <style>{`
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-      `}</style>
+      </div>
     </div>
   );
 };

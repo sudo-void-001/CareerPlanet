@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 import { CompanyLogo, SkillChip } from '../../components/common/UI';
 
@@ -14,12 +13,6 @@ function getMatchScore(jobSkills) {
   return Math.min(98, Math.round((matched.length / required.length) * 100));
 }
 
-const typeColors = {
-  'Internship': { bg: '#ede9fe', color: '#7c3aed' },
-  'Full Time':  { bg: '#d1fae5', color: '#065f46' },
-  'Part Time':  { bg: '#dbeafe', color: '#1e40af' },
-};
-
 function SuccessModal({ job, matchScore, onClose }) {
   const company = job.company_name || COMPANY_NAMES[job.company_id] || 'Company';
   const isHigh = matchScore >= 80;
@@ -30,7 +23,7 @@ function SuccessModal({ job, matchScore, onClose }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(8px)', zIndex: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(7, 8, 12, 0.75)', backdropFilter: 'blur(12px)', zIndex: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
         onClick={onClose}
       >
         <motion.div
@@ -39,68 +32,63 @@ function SuccessModal({ job, matchScore, onClose }) {
           exit={{ opacity: 0, scale: 0.9, y: 30 }}
           transition={{ type: 'spring', damping: 25, stiffness: 350 }}
           onClick={e => e.stopPropagation()}
-          style={{ background: 'white', borderRadius: 24, width: '100%', maxWidth: 440, overflow: 'hidden', boxShadow: '0 30px 60px -12px rgba(15,23,42,0.25)', border: '1px solid var(--border)' }}
+          className="glass"
+          style={{ background: '#13151f', borderRadius: 24, width: '100%', maxWidth: 460, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 30px 80px rgba(0,0,0,0.8)' }}
         >
           {/* Top Banner Accent */}
-          <div style={{ height: 8, background: 'linear-gradient(90deg, #10b981, #3b82f6)' }} />
+          <div style={{ height: 6, background: 'linear-gradient(90deg, #10b981, #06b6d4)' }} />
           
-          <div style={{ padding: '2rem 1.75rem', textAlign: 'center' }}>
+          <div style={{ padding: '2.25rem 2rem', textAlign: 'center' }}>
             <motion.div 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.15, type: 'spring', stiffness: 500, damping: 15 }}
-              style={{ width: 72, height: 72, borderRadius: '50%', background: '#d1fae5', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', margin: '0 auto 1.5rem' }}
+              style={{ width: 76, height: 76, borderRadius: '50%', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', margin: '0 auto 1.5rem', border: '1px solid rgba(16, 185, 129, 0.3)' }}
             >
               🎉
             </motion.div>
 
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Application Submitted!</h3>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-              Your application for <strong>{job.title}</strong> at <strong>{company}</strong> has been successfully processed.
+            <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.5rem' }}>Application Submitted!</h3>
+            <p style={{ fontSize: '0.90625rem', color: 'var(--text-secondary)', marginBottom: '1.75rem' }}>
+              Your application for <strong style={{ color: '#ffffff' }}>{job.title}</strong> at <strong style={{ color: '#ffffff' }}>{company}</strong> has been received.
             </p>
 
             {/* Score Ring Section */}
-            <div style={{ background: '#f8fafc', borderRadius: 16, padding: '1.25rem', border: '1px solid #f1f5f9', marginBottom: '1.5rem' }}>
+            <div style={{ background: 'rgba(255, 255, 255, 0.03)', borderRadius: 18, padding: '1.25rem', border: '1px solid rgba(255,255,255,0.08)', marginBottom: '1.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#475569' }}>CareerPlanet Match Analysis</span>
-                <span style={{ fontSize: '0.75rem', background: '#d1fae5', color: '#065f46', padding: '0.2rem 0.5rem', borderRadius: '999px', fontWeight: 700 }}>AI Verified</span>
+                <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-tertiary)' }}>CareerPlanet AI Match</span>
+                <span className="badge badge-green">AI Verified</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ width: 56, height: 56, borderRadius: '50%', background: isHigh ? '#d1fae5' : '#fef3c7', color: isHigh ? '#065f46' : '#92400e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.125rem' }}>
+                <div style={{ width: 56, height: 56, borderRadius: '50%', background: isHigh ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.2)', color: isHigh ? '#34d399' : '#fbbf24', border: `2px solid ${isHigh ? '#10b981' : '#f59e0b'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.15rem' }}>
                   {matchScore}%
                 </div>
                 <div style={{ textAlign: 'left' }}>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }}>
-                    {isHigh ? 'Excellent match alignment!' : 'Solid match alignment!'}
+                  <div style={{ fontWeight: 700, fontSize: '0.9375rem', color: '#ffffff' }}>
+                    {isHigh ? 'High candidate compatibility!' : 'Solid skill alignment!'}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                    Recruiter has been notified via automatic email.
+                  <div style={{ fontSize: '0.78125rem', color: 'var(--text-secondary)' }}>
+                    Recruiter has been sent an automated email update.
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Notifications and Badges */}
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '2rem' }}>
-              <span style={{ fontSize: '0.75rem', background: '#e0e7ff', color: '#4338ca', padding: '0.25rem 0.75rem', borderRadius: 100, fontWeight: 600 }}>✉️ Recruiter Emailed</span>
-              <span style={{ fontSize: '0.75rem', background: '#f3f4f6', color: '#374151', padding: '0.25rem 0.75rem', borderRadius: 100, fontWeight: 600 }}>🔔 Status: Pending</span>
-            </div>
-
             {/* CTAs */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
               <button 
                 onClick={() => { onClose(); window.location.href = '/applications'; }} 
                 className="btn btn-primary" 
-                style={{ width: '100%', borderRadius: 12, padding: '0.75rem' }}
+                style={{ width: '100%', borderRadius: 14, padding: '0.85rem' }}
               >
-                Track on Applications Panel
+                Track Status on Applications Panel
               </button>
               <button 
                 onClick={onClose} 
                 className="btn btn-secondary" 
-                style={{ width: '100%', borderRadius: 12, padding: '0.75rem' }}
+                style={{ width: '100%', borderRadius: 14, padding: '0.85rem' }}
               >
-                Back to Job Board
+                Back to Opportunities
               </button>
             </div>
           </div>
@@ -116,8 +104,6 @@ function ApplyModal({ job, onClose, onSuccess }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [alreadyApplied, setAlreadyApplied] = useState(false);
-  
-  // Custom AI Loading Step states
   const [loadingStep, setLoadingStep] = useState(0);
 
   const company = job.company_name || COMPANY_NAMES[job.company_id] || 'Company';
@@ -125,9 +111,9 @@ function ApplyModal({ job, onClose, onSuccess }) {
 
   const steps = [
     'Uploading your resume securely...',
-    'CareerPlanet AI is extracting parsed resume contents...',
-    'Analyzing skill matching matrix & ATS scores...',
-    'Creating application record and dispatching recruiter email notification...'
+    'CareerPlanet AI extracting key candidate skills...',
+    'Evaluating role suitability & match vectoring...',
+    'Creating application record and notifying recruiter via email...'
   ];
 
   useEffect(() => {
@@ -147,7 +133,7 @@ function ApplyModal({ job, onClose, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file) { setError('Please upload your resume to apply.'); return; }
+    if (!file) { setError('Please select your resume PDF.'); return; }
     setSubmitting(true);
     setError('');
     setAlreadyApplied(false);
@@ -181,150 +167,86 @@ function ApplyModal({ job, onClose, onSuccess }) {
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.45)', backdropFilter: 'blur(6px)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(7, 8, 12, 0.8)', backdropFilter: 'blur(12px)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
         onClick={onClose}
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 16 }}
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 16 }}
-          transition={{ duration: 0.22 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ duration: 0.25 }}
           onClick={e => e.stopPropagation()}
-          style={{ background: 'white', borderRadius: 20, width: '100%', maxWidth: 420, overflow: 'hidden', boxShadow: '0 32px 80px rgba(0,0,0,0.18)' }}
+          style={{ background: '#13151f', borderRadius: 24, width: '100%', maxWidth: 460, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 30px 80px rgba(0,0,0,0.8)' }}
         >
           {/* Header */}
-          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '0.875rem', alignItems: 'center' }}>
               <CompanyLogo name={company} size={44} />
               <div>
-                <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>{job.title}</div>
-                <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>{company} • {job.location}</div>
+                <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#ffffff' }}>{job.title}</div>
+                <div style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)' }}>{company} • {job.location}</div>
               </div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '1.25rem', lineHeight: 1 }}>✕</button>
+            <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'var(--text-tertiary)', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', fontSize: '1rem' }}>✕</button>
           </div>
 
-          {/* Already Applied Friendly State */}
           {alreadyApplied ? (
-            <div style={{ padding: '2rem 1.5rem', textAlign: 'center' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📎</div>
-              <h4 style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Application Already Logged</h4>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                You have already submitted an application for the <strong>{job.title}</strong> role.
+            <div style={{ padding: '2.5rem 1.75rem', textAlign: 'center' }}>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📌</div>
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.5rem' }}>Application Exists</h3>
+              <p style={{ fontSize: '0.90625rem', color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+                You have already submitted an application for this role.
               </p>
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <button onClick={onClose} className="btn btn-secondary" style={{ flex: 1 }}>Close</button>
-                <button onClick={() => { onClose(); window.location.href = '/applications'; }} className="btn btn-primary" style={{ flex: 2 }}>View Applications</button>
-              </div>
+              <button onClick={onClose} className="btn btn-primary" style={{ width: '100%', borderRadius: 14 }}>
+                Got it
+              </button>
             </div>
           ) : submitting ? (
-            /* AI Loading Stepper */
-            <div style={{ padding: '2.5rem 2rem', textAlign: 'center' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-                <div className="spinner" style={{ width: '48px', height: '48px', border: '4px solid #e5e7eb', borderTopColor: '#6366f1', borderRadius: '50%', animation: 'spin 1.s linear infinite' }} />
-              </div>
+            <div style={{ padding: '3rem 2rem', textAlign: 'center' }}>
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(16, 185, 129, 0.15)', border: '2px solid #10b981', color: '#34d399', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', fontSize: '1.5rem', animation: 'pulse-glow 1.5s infinite' }}>✦</div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ffffff', marginBottom: '1.25rem' }}>Processing Application</h3>
               
-              <h4 style={{ fontWeight: 700, fontSize: '1.0625rem', color: 'var(--text-primary)', marginBottom: '1.25rem' }}>Processing Application</h4>
-
-              {/* Stepper Dots */}
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                {steps.map((_, index) => (
-                  <motion.div
-                    key={index}
-                    animate={{
-                      scale: index === loadingStep ? [1, 1.25, 1] : 1,
-                      backgroundColor: index <= loadingStep ? '#6366f1' : '#e5e7eb',
-                      boxShadow: index === loadingStep ? '0 0 10px rgba(99,102,241,0.6)' : 'none'
-                    }}
-                    transition={{ repeat: index === loadingStep ? Infinity : 0, duration: 1.2 }}
-                    style={{ width: 10, height: 10, borderRadius: '50%' }}
-                  />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', textAlign: 'left', background: 'rgba(255,255,255,0.03)', padding: '1.25rem', borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)' }}>
+                {steps.map((st, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', opacity: idx <= loadingStep ? 1 : 0.4 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: idx <= loadingStep ? '#10b981' : 'var(--text-tertiary)' }} />
+                    <span style={{ fontSize: '0.8125rem', color: idx <= loadingStep ? '#ffffff' : 'var(--text-tertiary)', fontWeight: idx === loadingStep ? 600 : 400 }}>{st}</span>
+                  </div>
                 ))}
               </div>
-
-              {/* Stepper Status text */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={loadingStep}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.2 }}
-                  style={{ fontSize: '0.875rem', color: '#6366f1', fontWeight: 600, minHeight: '40px', lineHeight: '1.4' }}
-                >
-                  {steps[loadingStep]}
-                </motion.div>
-              </AnimatePresence>
             </div>
           ) : (
-            <>
-              {/* AI Match Overview Banner */}
-              {localStorage.getItem('hasResume') ? (
-                <div style={{ margin: '1rem 1.5rem', padding: '0.875rem', background: match >= 80 ? '#f0fdf4' : '#fffbeb', borderRadius: 12, border: `1px solid ${match >= 80 ? '#bbf7d0' : '#fde68a'}` }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-                    <span style={{ fontSize: '1.25rem' }}>🎯</span>
-                    <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.9375rem', color: match >= 80 ? '#065f46' : '#92400e' }}>{match}% Match Score</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>AI estimated based on your loaded skills</div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ margin: '1rem 1.5rem', padding: '0.875rem', background: 'var(--surface-2)', borderRadius: 12, border: '1px dashed var(--border)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-                    <span style={{ fontSize: '1.25rem' }}>🔒</span>
-                    <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--text-primary)' }}>AI Match Analysis Locked</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Upload your resume below to unlock match insights</div>
-                    </div>
-                  </div>
-                </div>
-              )}
+            <form onSubmit={handleSubmit} style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {error && <div style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.75rem 1rem', borderRadius: 12, fontSize: '0.8125rem' }}>{error}</div>}
 
-              {/* Form */}
-              <form onSubmit={handleSubmit} style={{ padding: '0 1.5rem 1.5rem' }}>
-                <label className="label">Upload Resume *</label>
-                <div style={{
-                  border: `2px dashed ${file ? '#6366f1' : 'var(--border)'}`,
-                  borderRadius: 12, padding: '1.5rem', textAlign: 'center',
-                  background: file ? '#f5f3ff' : 'var(--surface-2)', marginBottom: '1rem',
-                  transition: 'all 0.15s ease', cursor: 'pointer',
-                }}>
-                  <input type="file" id="resume-upload" accept=".pdf,.doc,.docx" style={{ display: 'none' }} onChange={e => { setFile(e.target.files[0]); setError(''); }} />
-                  <label htmlFor="resume-upload" style={{ cursor: 'pointer', display: 'block' }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{file ? '📄' : '📎'}</div>
-                    <div style={{ fontWeight: 600, fontSize: '0.875rem', color: file ? '#6366f1' : 'var(--text-primary)', marginBottom: '0.25rem' }}>
-                      {file ? file.name : 'Click to select resume PDF'}
-                    </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>PDF, DOC, DOCX</div>
-                  </label>
-                </div>
-                
-                <label className="label" style={{ marginTop: '1rem' }}>Cover Letter (Optional)</label>
-                <textarea
-                  value={coverLetter}
-                  onChange={(e) => setCoverLetter(e.target.value)}
-                  placeholder="Write a custom letter to the recruiter..."
-                  style={{
-                    width: '100%', padding: '1rem', borderRadius: 12, border: '1px solid var(--border)',
-                    background: 'var(--surface-2)', outline: 'none', resize: 'vertical', minHeight: '100px',
-                    fontFamily: 'inherit', fontSize: '0.95rem', boxSizing: 'border-box', marginBottom: '1.5rem',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#6366f1'}
-                  onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+              <div>
+                <label className="label">Upload Resume (PDF)</label>
+                <input 
+                  type="file" 
+                  accept=".pdf" 
+                  onChange={e => setFile(e.target.files[0])}
+                  className="input"
+                  style={{ padding: '0.625rem' }}
                 />
+              </div>
 
-                {error && <div style={{ background: '#fee2e2', color: '#991b1b', borderRadius: 10, padding: '0.625rem 0.875rem', fontSize: '0.8125rem', marginBottom: '1rem', border: '1px solid #fecaca' }}>{error}</div>}
+              <div>
+                <label className="label">Custom Pitch / Cover Letter (Optional)</label>
+                <textarea 
+                  rows={4}
+                  value={coverLetter}
+                  onChange={e => setCoverLetter(e.target.value)}
+                  placeholder="Introduce yourself to the recruiter, mention key achievements or skills..."
+                  className="input"
+                  style={{ resize: 'vertical' }}
+                />
+              </div>
 
-                <div style={{ display: 'flex', gap: '0.625rem' }}>
-                  <button type="button" onClick={onClose} className="btn btn-secondary" style={{ flex: 1 }}>Cancel</button>
-                  <button type="submit" disabled={submitting} className="btn btn-primary" style={{ flex: 2 }}>
-                    Apply & Evaluate
-                  </button>
-                </div>
-              </form>
-            </>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <button type="button" onClick={onClose} className="btn btn-secondary" style={{ flex: 1, borderRadius: 14 }}>Cancel</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1, borderRadius: 14 }}>Submit Pitch →</button>
+              </div>
+            </form>
           )}
         </motion.div>
       </motion.div>
@@ -336,161 +258,176 @@ export default function Jobs() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('All');
-  const [selectedJob, setSelectedJob] = useState(null);
-  
-  // Custom success Modal display states
+  const [typeFilter, setTypeFilter] = useState('All');
+  const [applyingJob, setApplyingJob] = useState(null);
   const [successJob, setSuccessJob] = useState(null);
-  const [successScore, setSuccessScore] = useState(0);
-
-  const navigate = useNavigate();
+  const [successMatchScore, setSuccessMatchScore] = useState(85);
 
   useEffect(() => {
-    api.get('/jobs/').then(r => setJobs(r.data)).finally(() => setLoading(false));
+    const fetchJobs = async () => {
+      try {
+        const res = await api.get('/jobs/');
+        setJobs(res.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchJobs();
   }, []);
 
-  const handleApply = (job) => {
-    if (!localStorage.getItem('token')) { navigate('/login'); return; }
-    setSelectedJob(job);
-  };
-
-  const handleSuccess = (matchScore) => {
-    const job = selectedJob;
-    setSelectedJob(null);
-    setSuccessJob(job);
-    setSuccessScore(matchScore);
-  };
-
-  const filters = ['All', 'Internship', 'Full Time'];
-  const filtered = jobs.filter(j => {
-    const q = search.toLowerCase();
-    const matchesSearch = !q || j.title.toLowerCase().includes(q) || (j.skills || '').toLowerCase().includes(q);
-    const matchesFilter = filter === 'All' || j.job_type === filter;
-    return matchesSearch && matchesFilter;
+  const filteredJobs = jobs.filter(job => {
+    const matchesSearch = (job.title || '').toLowerCase().includes(search.toLowerCase()) ||
+                          (job.company_name || COMPANY_NAMES[job.company_id] || '').toLowerCase().includes(search.toLowerCase()) ||
+                          (job.location || '').toLowerCase().includes(search.toLowerCase());
+    const matchesType = typeFilter === 'All' || job.job_type === typeFilter;
+    return matchesSearch && matchesType;
   });
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)', paddingBottom: '4rem' }}>
-      {/* Header */}
-      <div style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', padding: '2rem 1rem' }}>
-        <div className="container">
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-            <h1 style={{ marginBottom: '0.375rem' }}>Find Your <span className="gradient-text">Dream Role</span></h1>
-            <p style={{ marginBottom: '1.5rem', fontSize: '1rem' }}>{jobs.length} opportunities from top companies</p>
-
-            {/* Search + Filter */}
-            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-              <div style={{ position: 'relative', flex: '1 1 300px' }}>
-                <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }}>🔍</span>
-                <input
-                  className="input"
-                  style={{ paddingLeft: '2.5rem' }}
-                  placeholder="Search jobs, skills, companies..."
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                />
-              </div>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {filters.map(f => (
-                  <button key={f} onClick={() => setFilter(f)} className="btn" style={{
-                    padding: '0.625rem 1rem',
-                    background: filter === f ? 'var(--primary)' : 'var(--surface)',
-                    color: filter === f ? 'white' : 'var(--text-secondary)',
-                    border: `1.5px solid ${filter === f ? 'var(--primary)' : 'var(--border)'}`,
-                    borderRadius: 'var(--radius-full)',
-                    fontSize: '0.875rem',
-                  }}>
-                    {f}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+    <div className="page hero-gradient">
+      <div className="container">
+        
+        {/* Page Header */}
+        <div style={{ marginBottom: '3rem' }}>
+          <span className="badge badge-green" style={{ marginBottom: '0.75rem', display: 'inline-flex' }}>✦ Verified Openings</span>
+          <h1 style={{ marginBottom: '0.75rem', fontSize: '2.75rem' }}>Discover Opportunities</h1>
+          <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>Explore curated engineering, product, and research roles from top recruiters.</p>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="container" style={{ paddingTop: '1.5rem' }}>
-        {loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1.25rem', marginTop: '0.5rem' }}>
-            {[1,2,3,4].map(i => <div key={i} className="skeleton" style={{ height: 220, borderRadius: 16 }} />)}
+        {/* Search & Filter Bar */}
+        <div className="glass-card" style={{ padding: '1.25rem 1.5rem', marginBottom: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <div style={{ flex: 1, minWidth: 260 }}>
+            <input 
+              type="text" 
+              placeholder="Search by job title, company, or city..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="input"
+              style={{ borderRadius: 'var(--radius-full)' }}
+            />
           </div>
-        ) : (
-          <motion.div
-            initial="hidden" animate="show"
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1.25rem' }}
-          >
-            {filtered.map(job => {
-              const match = getMatchScore(job.skills);
-              const company = job.company_name || COMPANY_NAMES[job.company_id] || 'Company';
-              const typeStyle = typeColors[job.job_type] || { bg: '#f3f4f6', color: '#374151' };
+          
+          <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto' }}>
+            {['All', 'Full Time', 'Internship', 'Part Time'].map(tf => (
+              <button
+                key={tf}
+                onClick={() => setTypeFilter(tf)}
+                className="btn"
+                style={{
+                  background: typeFilter === tf ? 'rgba(16, 185, 129, 0.15)' : 'transparent',
+                  color: typeFilter === tf ? '#34d399' : 'var(--text-secondary)',
+                  border: typeFilter === tf ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border)',
+                  borderRadius: 'var(--radius-full)'
+                }}
+              >
+                {tf}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Job Cards Grid */}
+        {loading ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1.5rem' }}>
+            {[1,2,3,4,5,6].map(n => <div key={n} className="skeleton" style={{ height: 260 }} />)}
+          </div>
+        ) : filteredJobs.length > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '1.5rem' }}>
+            {filteredJobs.map(job => {
+              const company = job.company_name || COMPANY_NAMES[job.company_id] || 'Top Employer';
+              const score = getMatchScore(job.skills);
 
               return (
                 <motion.div
                   key={job.id}
-                  variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } }}
-                  whileHover={{ y: -4, boxShadow: '0 12px 32px rgba(0,0,0,0.1)' }}
-                  style={{ background: 'white', borderRadius: 16, border: '1px solid var(--border)', overflow: 'hidden', cursor: 'pointer', transition: 'box-shadow 0.2s ease' }}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass-card"
+                  style={{
+                    padding: '1.75rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                  }}
                 >
-                  <div style={{ height: 6, background: `linear-gradient(90deg, ${job.company_id === 1 ? '#00a4ef' : job.company_id === 2 ? '#34a853' : '#6366f1'}, #8b5cf6)` }} />
-
-                  <div style={{ padding: '1.25rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.875rem' }}>
-                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                        <CompanyLogo name={company} size={40} />
+                  <div>
+                    {/* Header */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
+                      <div style={{ display: 'flex', gap: '0.875rem', alignItems: 'center' }}>
+                        <CompanyLogo name={company} size={48} />
                         <div>
-                          <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)', lineHeight: 1.3 }}>{job.title}</div>
-                          <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>{company}</div>
+                          <h3 style={{ fontSize: '1.15rem', color: '#ffffff', marginBottom: '0.2rem' }}>{job.title}</h3>
+                          <div style={{ fontSize: '0.84375rem', color: 'var(--text-tertiary)' }}>{company} • {job.location || 'Remote'}</div>
                         </div>
                       </div>
-                      
-                      {localStorage.getItem('hasResume') ? (
-                        <div className={`match-ring ${match >= 80 ? 'match-high' : match >= 60 ? 'match-mid' : 'match-low'}`} title={`${match}% AI match`}>
-                          {match}%
-                        </div>
-                      ) : (
-                        <div onClick={(e) => { e.stopPropagation(); navigate('/resume'); }} className="match-ring" style={{ background: 'var(--surface-2)', color: 'var(--text-tertiary)', cursor: 'pointer', border: '1px dashed var(--border)' }} title="Analyze resume to see AI match">
-                          🔒
-                        </div>
-                      )}
+                      <span className="badge badge-green">{score}% Match</span>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.875rem' }}>
-                      <span style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-secondary)' }}>📍 {job.location}</span>
-                      <span className="badge" style={{ background: typeStyle.bg, color: typeStyle.color }}>{job.job_type}</span>
-                      {job.salary && <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#065f46', background: '#f0fdf4', padding: '0.2rem 0.5rem', borderRadius: 6 }}>{job.salary}</span>}
-                    </div>
+                    {/* Description */}
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1.25rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {job.description || 'Exciting career opportunity at a fast-growing company working on cutting edge technologies.'}
+                    </p>
 
+                    {/* Skill chips */}
                     {job.skills && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem', marginBottom: '1rem' }}>
-                        {job.skills.split(',').slice(0, 4).map(s => <SkillChip key={s} skill={s} />)}
+                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+                        {job.skills.split(',').map((sk, idx) => (
+                          <SkillChip key={idx} skill={sk} />
+                        ))}
                       </div>
                     )}
+                  </div>
 
-                    <button onClick={() => handleApply(job)} className="btn btn-primary" style={{ width: '100%', borderRadius: 10 }}>
-                      Apply Now
+                  {/* Footer Bar */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div style={{ fontSize: '0.875rem', fontWeight: 700, color: '#34d399' }}>
+                      {job.salary || '$80,000 - $110,000'}
+                    </div>
+                    <button 
+                      onClick={() => setApplyingJob(job)} 
+                      className="btn btn-primary btn-sm"
+                      style={{ borderRadius: 'var(--radius-full)' }}
+                    >
+                      Apply Now →
                     </button>
                   </div>
+
                 </motion.div>
               );
             })}
-            {filtered.length === 0 && (
-              <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
-                <p>No jobs match your search. Try different keywords.</p>
-              </div>
-            )}
-          </motion.div>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '5rem 2rem', background: 'rgba(19, 21, 31, 0.5)', borderRadius: 24, border: '1px dashed var(--border)' }}>
+            <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🔍</div>
+            <h3 style={{ fontSize: '1.35rem', color: '#ffffff', marginBottom: '0.5rem' }}>No positions found</h3>
+            <p style={{ color: 'var(--text-secondary)' }}>Try adjusting your search filters or browse all openings.</p>
+          </div>
         )}
+
       </div>
 
-      {selectedJob && <ApplyModal job={selectedJob} onClose={() => setSelectedJob(null)} onSuccess={handleSuccess} />}
-      {successJob && <SuccessModal job={successJob} matchScore={successScore} onClose={() => setSuccessJob(null)} />}
-      
-      <style>{`
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-      `}</style>
+      {applyingJob && (
+        <ApplyModal 
+          job={applyingJob} 
+          onClose={() => setApplyingJob(null)}
+          onSuccess={(matchScore) => {
+            setSuccessMatchScore(matchScore);
+            setSuccessJob(applyingJob);
+            setApplyingJob(null);
+          }}
+        />
+      )}
+
+      {successJob && (
+        <SuccessModal 
+          job={successJob} 
+          matchScore={successMatchScore} 
+          onClose={() => setSuccessJob(null)} 
+        />
+      )}
     </div>
   );
 }

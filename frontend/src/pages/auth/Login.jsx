@@ -3,214 +3,26 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../api/axios';
 
-const API_BASE = 'http://localhost:8000';
-const getUser = () => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } };
-const getAvatarUrl = (user) => user?.avatar_url ? `${API_BASE}${user.avatar_url}` : null;
-
 const testimonials = [
   {
-    quote: "CareerPlanet helped me land my dream job at a top tech company in just 2 weeks!",
-    author: "Sarah J.",
+    quote: "CareerPlanet helped me land my dream job at Microsoft in just 2 weeks!",
+    author: "Arjun S.",
     role: "Software Engineer",
+    company: "Microsoft"
+  },
+  {
+    quote: "The AI resume analysis and automated recruiter dispatch are absolute game-changers.",
+    author: "Priya M.",
+    role: "Full Stack Developer",
     company: "Google"
   },
   {
-    quote: "The AI resume builder and interview prep features are absolute game-changers.",
-    author: "Michael T.",
-    role: "Product Manager",
-    company: "Stripe"
-  },
-  {
-    quote: "As a recruiter, finding top talent has never been this seamless and efficient.",
-    author: "Emily R.",
+    quote: "As a recruiter, viewing candidate cover letters and communicating in 1-click is effortless.",
+    author: "Rahul K.",
     role: "Senior Recruiter",
     company: "Microsoft"
   }
 ];
-
-const styles = {
-  container: {
-    display: 'flex',
-    height: '100vh',
-    width: '100%',
-    fontFamily: '"Inter", "Roboto", sans-serif',
-    overflow: 'hidden',
-    backgroundColor: '#ffffff'
-  },
-  leftPanel: {
-    width: '45%',
-    background: 'var(--gradient, linear-gradient(135deg, #1e1b4b, #4338ca))',
-    color: '#ffffff',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    padding: '3rem',
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  rightPanel: {
-    width: '55%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#ffffff',
-    padding: '2rem',
-    overflowY: 'auto'
-  },
-  formContainer: {
-    width: '100%',
-    maxWidth: '440px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem'
-  },
-  logo: {
-    fontSize: '1.75rem',
-    fontWeight: '800',
-    background: 'var(--gradient, linear-gradient(135deg, #4338ca, #3b82f6))',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    marginBottom: '0.5rem',
-    display: 'inline-block'
-  },
-  heading: {
-    fontSize: '2rem',
-    fontWeight: '700',
-    color: 'var(--text-primary, #111827)',
-    margin: 0
-  },
-  subHeading: {
-    fontSize: '0.95rem',
-    color: 'var(--text-secondary, #6b7280)',
-    marginTop: '0.25rem'
-  },
-  inputGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem'
-  },
-  label: {
-    fontSize: '0.875rem',
-    fontWeight: '600',
-    color: 'var(--text-primary, #374151)'
-  },
-  input: {
-    padding: '0.875rem 1rem',
-    borderRadius: '8px',
-    border: '1px solid #d1d5db',
-    fontSize: '1rem',
-    outline: 'none',
-    transition: 'all 0.2s ease',
-    backgroundColor: '#f9fafb'
-  },
-  submitBtn: {
-    padding: '0.875rem 1rem',
-    borderRadius: '8px',
-    border: 'none',
-    background: 'var(--gradient, linear-gradient(135deg, #4338ca, #3b82f6))',
-    color: '#ffffff',
-    fontSize: '1rem',
-    fontWeight: '600',
-    cursor: 'pointer',
-    marginTop: '0.5rem',
-    boxShadow: '0 4px 12px rgba(67, 56, 202, 0.3)',
-    transition: 'transform 0.2s, box-shadow 0.2s'
-  },
-  divider: {
-    display: 'flex',
-    alignItems: 'center',
-    textAlign: 'center',
-    color: '#9ca3af',
-    fontSize: '0.875rem',
-    margin: '1rem 0'
-  },
-  dividerLine: {
-    flex: 1,
-    borderBottom: '1px solid #e5e7eb'
-  },
-  demoGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '0.75rem'
-  },
-  demoBtn: {
-    padding: '0.75rem 0.5rem',
-    borderRadius: '8px',
-    border: '1px solid #e5e7eb',
-    background: '#ffffff',
-    color: '#374151',
-    fontSize: '0.875rem',
-    fontWeight: '500',
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '0.25rem'
-  },
-  demoIcon: {
-    fontSize: '1.25rem'
-  },
-  errorMsg: {
-    color: '#dc2626',
-    backgroundColor: '#fee2e2',
-    padding: '0.75rem',
-    borderRadius: '6px',
-    fontSize: '0.875rem',
-    border: '1px solid #f87171'
-  },
-  testimonialContainer: {
-    position: 'relative',
-    height: '160px',
-    marginTop: 'auto',
-    marginBottom: '2rem'
-  },
-  testimonialCard: {
-    background: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(12px)',
-    padding: '1.5rem',
-    borderRadius: '16px',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
-    position: 'absolute',
-    width: '100%',
-    boxSizing: 'border-box'
-  },
-  floatingBadge: {
-    position: 'absolute',
-    background: 'rgba(255, 255, 255, 0.15)',
-    backdropFilter: 'blur(8px)',
-    padding: '0.75rem 1rem',
-    borderRadius: '12px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-  }
-};
-
-const bgDecorations = {
-  circle1: {
-    position: 'absolute',
-    width: '400px',
-    height: '400px',
-    background: 'radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, rgba(0,0,0,0) 70%)',
-    top: '-100px',
-    right: '-100px',
-    borderRadius: '50%',
-    zIndex: 0
-  },
-  circle2: {
-    position: 'absolute',
-    width: '500px',
-    height: '500px',
-    background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(0,0,0,0) 70%)',
-    bottom: '-150px',
-    left: '-150px',
-    borderRadius: '50%',
-    zIndex: 0
-  }
-};
 
 export default function Login() {
   const navigate = useNavigate();
@@ -236,9 +48,6 @@ export default function Login() {
     } else if (type === 'recruiter') {
       setEmail('rahul@microsoft.demo');
       setPassword('Microsoft@123');
-    } else if (type === 'admin') {
-      setEmail('admin@careerplanet.demo');
-      setPassword('Admin@123');
     }
   };
 
@@ -249,7 +58,6 @@ export default function Login() {
     setSuccessMsg('');
 
     try {
-      // Create x-www-form-urlencoded data
       const formData = new URLSearchParams();
       formData.append('username', email);
       formData.append('password', password);
@@ -289,35 +97,41 @@ export default function Login() {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={{ display: 'flex', minHeight: '100vh', width: '100%', background: '#07080c', color: '#f8fafc' }}>
+      
       {/* Left Panel */}
       <motion.div 
-        style={styles.leftPanel}
-        initial={{ opacity: 0, x: -50 }}
+        initial={{ opacity: 0, x: -40 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="hide-on-mobile"
+        transition={{ duration: 0.6 }}
+        style={{
+          width: '45%',
+          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.08) 50%, #0d0f17 100%)',
+          borderRight: '1px solid rgba(255,255,255,0.08)',
+          padding: '4rem',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
       >
-        <div style={bgDecorations.circle1} />
-        <div style={bgDecorations.circle2} />
-        
         <div style={{ position: 'relative', zIndex: 10 }}>
-          <div style={{ fontSize: '2rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '2.5rem' }}>🪐</span> CareerPlanet
+          <div style={{ fontSize: '1.75rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '0.625rem', color: '#ffffff' }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #10b981, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontWeight: 800, fontSize: '1.1rem' }}>C</div>
+            CareerPlanet
           </div>
-          <h2 style={{ fontSize: '3rem', fontWeight: '700', lineHeight: '1.2', marginTop: '2rem', marginBottom: '1rem' }}>
+          <h2 style={{ fontSize: '3rem', fontWeight: '800', lineHeight: '1.15', marginTop: '3rem', marginBottom: '1.25rem', letterSpacing: '-0.03em' }}>
             Launch your career into <br/>
-            <span style={{ color: '#818cf8' }}>the stratosphere.</span>
+            <span className="gradient-text">the stratosphere.</span>
           </h2>
-          <p style={{ fontSize: '1.125rem', color: '#c7d2fe', maxWidth: '400px', lineHeight: '1.6' }}>
-            Join over 50,000 professionals and 1,000+ top companies shaping the future of work.
+          <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', maxWidth: '420px', lineHeight: '1.7' }}>
+            AI-powered resume optimization, smart job matching, and direct 1-click recruiter messaging.
           </p>
         </div>
 
-        {/* Floating Badges Removed for clean look */}
-
-        {/* Testimonials */}
-        <div style={{...styles.testimonialContainer, zIndex: 1}}>
+        {/* Testimonial slider */}
+        <div style={{ position: 'relative', zIndex: 10, height: '170px' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTestimonial}
@@ -325,19 +139,19 @@ export default function Login() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              style={styles.testimonialCard}
+              className="glass-card"
+              style={{ padding: '1.75rem', borderRadius: 20 }}
             >
-              <div style={{ fontSize: '1.5rem', color: '#818cf8', marginBottom: '0.5rem' }}>"</div>
-              <p style={{ fontSize: '1rem', fontStyle: 'italic', marginBottom: '1rem', lineHeight: '1.5' }}>
-                {testimonials[activeTestimonial].quote}
+              <p style={{ fontSize: '0.95rem', fontStyle: 'italic', marginBottom: '1.25rem', lineHeight: '1.6', color: '#e2e8f0' }}>
+                "{testimonials[activeTestimonial].quote}"
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #06b6d4)', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
                   {testimonials[activeTestimonial].author.charAt(0)}
                 </div>
                 <div>
-                  <div style={{ fontWeight: '600', fontSize: '0.875rem' }}>{testimonials[activeTestimonial].author}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>{testimonials[activeTestimonial].role} @ {testimonials[activeTestimonial].company}</div>
+                  <div style={{ fontWeight: '700', fontSize: '0.90625rem', color: '#ffffff' }}>{testimonials[activeTestimonial].author}</div>
+                  <div style={{ fontSize: '0.78125rem', color: '#34d399' }}>{testimonials[activeTestimonial].role} @ {testimonials[activeTestimonial].company}</div>
                 </div>
               </div>
             </motion.div>
@@ -345,110 +159,99 @@ export default function Login() {
         </div>
       </motion.div>
 
-      {/* Right Panel */}
+      {/* Right Panel Form */}
       <motion.div 
-        style={styles.rightPanel}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}
+        style={{
+          width: '55%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '3rem 2rem',
+        }}
       >
-        <div style={styles.formContainer}>
-          <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-            <span style={{ fontSize: '2rem' }}>🪐</span>
-            <div style={styles.logo}>CareerPlanet</div>
-            <h1 style={styles.heading}>Welcome back</h1>
-            <p style={styles.subHeading}>Please enter your details to sign in.</p>
+        <div style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div>
+            <h1 style={{ fontSize: '2.25rem', fontWeight: 800, marginBottom: '0.5rem', color: '#ffffff' }}>Welcome back</h1>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Sign in to access your dashboard & job applications.</p>
           </div>
 
-          {error && <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} style={styles.errorMsg}>{error}</motion.div>}
-          {successMsg && <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} style={{...styles.errorMsg, backgroundColor: '#dcfce7', color: '#166534', borderColor: '#86efac'}}>{successMsg}</motion.div>}
+          {error && <div style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.875rem 1rem', borderRadius: 12, fontSize: '0.875rem' }}>{error}</div>}
+          {successMsg && <div style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '0.875rem 1rem', borderRadius: 12, fontSize: '0.875rem' }}>{successMsg}</div>}
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Email Address</label>
+            <div>
+              <label className="label">Email Address</label>
               <input 
                 type="email" 
                 required 
-                style={styles.input} 
-                placeholder="Enter your email"
+                className="input" 
+                placeholder="arjun@student.demo"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                onFocus={(e) => e.target.style.borderColor = '#4f46e5'}
-                onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               />
             </div>
 
-            <div style={styles.inputGroup}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label style={styles.label}>Password</label>
-                <a href="#" style={{ fontSize: '0.875rem', color: '#4f46e5', textDecoration: 'none', fontWeight: '500' }}>Forgot password?</a>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                <label className="label" style={{ marginBottom: 0 }}>Password</label>
+                <a href="#" style={{ fontSize: '0.8125rem', color: '#10b981', textDecoration: 'none', fontWeight: 600 }}>Forgot password?</a>
               </div>
               <input 
                 type="password" 
                 required 
-                style={styles.input} 
+                className="input" 
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onFocus={(e) => e.target.style.borderColor = '#4f46e5'}
-                onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               />
             </div>
 
-            <motion.button 
+            <button 
               type="submit" 
-              style={styles.submitBtn}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              className="btn btn-primary btn-lg" 
+              style={{ width: '100%', borderRadius: 14, marginTop: '0.5rem' }}
               disabled={loading}
             >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </motion.button>
+              {loading ? 'Signing in...' : 'Sign In →'}
+            </button>
           </form>
 
-          <div style={{ textAlign: 'center', fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem' }}>
-            Don't have an account? <span style={{ color: '#4f46e5', fontWeight: '600', cursor: 'pointer' }} onClick={() => navigate('/register')}>Sign up</span>
+          <div style={{ textAlign: 'center', fontSize: '0.90625rem', color: 'var(--text-secondary)' }}>
+            Don't have an account? <span style={{ color: '#10b981', fontWeight: 700, cursor: 'pointer' }} onClick={() => navigate('/register')}>Create account</span>
           </div>
 
-          <div style={styles.divider}>
-            <div style={styles.dividerLine}></div>
-            <span style={{ padding: '0 1rem' }}>Or continue with demo</span>
-            <div style={styles.dividerLine}></div>
+          <div className="divider" />
+
+          {/* Quick Demo Login Buttons */}
+          <div>
+            <p style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, marginBottom: '0.75rem', textAlign: 'center' }}>Quick Demo Access</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
+              <button 
+                type="button"
+                className="glass-card" 
+                style={{ padding: '0.875rem', cursor: 'pointer', textAlign: 'center', color: '#ffffff' }}
+                onClick={() => handleDemoClick('student')}
+              >
+                <span style={{ fontSize: '1.25rem', display: 'block', marginBottom: '0.25rem' }}>🎓</span>
+                <span style={{ fontSize: '0.875rem', fontWeight: 700 }}>Student Demo</span>
+              </button>
+              <button 
+                type="button"
+                className="glass-card" 
+                style={{ padding: '0.875rem', cursor: 'pointer', textAlign: 'center', color: '#ffffff' }}
+                onClick={() => handleDemoClick('recruiter')}
+              >
+                <span style={{ fontSize: '1.25rem', display: 'block', marginBottom: '0.25rem' }}>🏢</span>
+                <span style={{ fontSize: '0.875rem', fontWeight: 700 }}>Recruiter Demo</span>
+              </button>
+            </div>
           </div>
 
-          <div style={styles.demoGrid}>
-            <motion.div 
-              style={styles.demoBtn} 
-              whileHover={{ borderColor: '#4f46e5', backgroundColor: '#f5f3ff' }}
-              onClick={() => handleDemoClick('student')}
-            >
-              <span style={styles.demoIcon}>🎓</span>
-              Student
-            </motion.div>
-            <motion.div 
-              style={styles.demoBtn} 
-              whileHover={{ borderColor: '#4f46e5', backgroundColor: '#f5f3ff' }}
-              onClick={() => handleDemoClick('recruiter')}
-            >
-              <span style={styles.demoIcon}>🏢</span>
-              Recruiter
-            </motion.div>
-          </div>
         </div>
       </motion.div>
-
-      <style>
-        {`
-          @media (max-width: 900px) {
-            .hide-on-mobile {
-              display: none !important;
-            }
-            .right-panel {
-              width: 100% !important;
-            }
-          }
-        `}
-      </style>
     </div>
   );
 }

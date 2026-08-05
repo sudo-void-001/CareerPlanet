@@ -13,127 +13,217 @@ const companies = [
 ];
 
 const stats = [
-  { value: '50,000+', label: 'Students placed' },
-  { value: '1,200+', label: 'Companies hiring' },
-  { value: '98%', label: 'Placement rate' },
-  { value: '4.9★', label: 'Student rating' },
+  { value: '50,000+', label: 'Students Placed', icon: '⚡' },
+  { value: '1,200+', label: 'Verified Recruiters', icon: '🏢' },
+  { value: '98%', label: 'Placement Rate', icon: '🎯' },
+  { value: '4.9★', label: 'Student Rating', icon: '⭐️' },
 ];
 
 const features = [
-  { icon: '🤖', title: 'AI Resume Analysis', desc: 'Get instant AI feedback on your resume with ATS score, skill gaps, and personalized recommendations.' },
-  { icon: '🎯', title: 'Smart Job Matching', desc: 'Our AI matches you to jobs based on your skills, experience, and career goals with 90%+ accuracy.' },
-  { icon: '✍️', title: 'Cover Letter Generator', desc: 'Generate tailored, professional cover letters in seconds for any job application.' },
-  { icon: '🎤', title: 'Interview Prep', desc: 'Practice with AI-generated questions specific to the role and company you are applying for.' },
-  { icon: '🗺️', title: 'Career Roadmap', desc: 'Get a personalized step-by-step plan to land your dream job based on your current skills.' },
-  { icon: '📊', title: 'Skill Gap Analysis', desc: 'Instantly discover what skills you are missing and get curated learning recommendations.' },
+  { 
+    icon: '🤖', 
+    title: 'AI Resume Analysis', 
+    desc: 'Instant deep-scan feedback on ATS compatibility, missing keywords, structural score, and personalized improvement tips.',
+    tag: 'Instant Score'
+  },
+  { 
+    icon: '🎯', 
+    title: 'Smart Job Matching', 
+    desc: 'Algorithmic skill vectoring matches student profiles to live recruiter openings with high precision accuracy.',
+    tag: 'High Accuracy' 
+  },
+  { 
+    icon: '✍️', 
+    title: 'Custom Cover Letters', 
+    desc: 'Generate tailored, professional pitch letters to hiring managers attached directly to your application.',
+    tag: '1-Click Pitch'
+  },
+  { 
+    icon: '🎤', 
+    title: 'Real-Time AI Assistant', 
+    desc: '24/7 Groq-powered career mentor ready to prep you for technical interviews, negotiate offers, and map skills.',
+    tag: 'Groq Powered'
+  },
+  { 
+    icon: '🗺️', 
+    title: 'Interactive Application Tracker', 
+    desc: 'Live step-by-step progress pipeline showing email deliveries, recruiter reviews, and shortlist notifications.',
+    tag: 'Live Tracking'
+  },
+  { 
+    icon: '📊', 
+    title: 'Skill Gap Breakdown', 
+    desc: 'Curated AI recommendations pin-pointing exactly which frameworks to learn to unlock tier-1 compensation.',
+    tag: 'Career Growth'
+  },
 ];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
 };
 
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
+  show: { transition: { staggerChildren: 0.1 } },
 };
 
 export default function Landing() {
   const isLoggedIn = !!localStorage.getItem('token');
 
   return (
-    <div style={{ background: 'var(--bg)' }}>
-      {/* ── HERO ────────────────────────────────────── */}
-      <section style={{
-        background: 'radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.07) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.05) 0%, transparent 50%), var(--bg)',
-        paddingTop: '5rem', paddingBottom: '4rem',
-      }}>
+    <div style={{ background: 'var(--bg)', minHeight: '100vh', color: 'var(--text-primary)', overflowX: 'hidden' }}>
+      
+      {/* ── HERO SECTION ────────────────────────────── */}
+      <section className="hero-gradient" style={{ paddingTop: '6rem', paddingBottom: '6rem', position: 'relative' }}>
+        
+        {/* Glow ambient lights */}
+        <div style={{ position: 'absolute', top: '20%', left: '10%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%)', filter: 'blur(60px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '40%', right: '10%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%)', filter: 'blur(70px)', pointerEvents: 'none' }} />
+
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
-            {/* Left */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '4rem', alignItems: 'center' }}>
+            
+            {/* Left Content */}
             <motion.div initial="hidden" animate="show" variants={stagger}>
               <motion.div variants={fadeUp}>
-                <span className="badge badge-indigo" style={{ marginBottom: '1.25rem', display: 'inline-flex', gap: '0.375rem' }}>
-                  <span>✦</span> AI-Powered Placement Platform
+                <span className="badge badge-green" style={{ marginBottom: '1.5rem', display: 'inline-flex', gap: '0.5rem', padding: '0.4rem 1rem', fontSize: '0.8125rem' }}>
+                  <span>✦</span> Next-Gen Placement Ecosystem
                 </span>
               </motion.div>
 
-              <motion.h1 variants={fadeUp} style={{ fontSize: 'clamp(2.25rem, 4.5vw, 3.5rem)', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '1.25rem', lineHeight: 1.1 }}>
-                Find opportunities.<br />
-                <span className="gradient-text">Build your future.</span>
+              <motion.h1 variants={fadeUp} style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, marginBottom: '1.5rem', lineHeight: 1.1, letterSpacing: '-0.03em' }}>
+                Land your dream job.<br />
+                <span className="gradient-text">Powered by AI Intelligence.</span>
               </motion.h1>
 
-              <motion.p variants={fadeUp} style={{ fontSize: '1.125rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '2rem', maxWidth: 480 }}>
-                The smartest way to get placed. AI-powered resume analysis, personalized job matches, and interview prep — all in one platform.
+              <motion.p variants={fadeUp} style={{ fontSize: '1.15rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '2.5rem', maxWidth: 520 }}>
+                CareerPlanet bridges Students, Recruiters, and Colleges into one intelligent ecosystem. Instant ATS analysis, custom recruiter pitches, and automated status notifications.
               </motion.p>
 
-              <motion.div variants={fadeUp} style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
+              <motion.div variants={fadeUp} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '3.5rem' }}>
                 {isLoggedIn ? (
-                  <Link to="/jobs" className="btn btn-primary btn-lg">Browse Jobs →</Link>
+                  <Link to="/jobs" className="btn btn-primary btn-lg">
+                    Browse Opportunities →
+                  </Link>
                 ) : (
                   <>
-                    <Link to="/register" className="btn btn-primary btn-lg">Get started free</Link>
-                    <Link to="/login" className="btn btn-secondary btn-lg">Sign in</Link>
+                    <Link to="/register" className="btn btn-primary btn-lg">
+                      Get Started Free
+                    </Link>
+                    <Link to="/login" className="btn btn-secondary btn-lg">
+                      Sign In to Account
+                    </Link>
                   </>
                 )}
               </motion.div>
 
-              <motion.div variants={fadeUp} style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+              {/* Stats Bar */}
+              <motion.div variants={fadeUp} style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem', padding: '1.5rem', background: 'rgba(19, 21, 31, 0.6)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', backdropFilter: 'blur(12px)' }}>
                 {stats.map(s => (
                   <div key={s.label}>
-                    <div style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--text-primary)' }}>{s.value}</div>
-                    <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>{s.label}</div>
+                    <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff' }}>{s.value}</div>
+                    <div style={{ fontSize: '0.78125rem', color: 'var(--text-tertiary)', marginTop: '0.25rem' }}>{s.label}</div>
                   </div>
                 ))}
               </motion.div>
             </motion.div>
 
-            {/* Right - Hero image */}
+            {/* Right Card Illustration Component */}
             <motion.div
-              initial={{ opacity: 0, x: 32, scale: 0.97 }}
+              initial={{ opacity: 0, x: 40, scale: 0.95 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
               style={{ position: 'relative' }}
             >
+              {/* Main Visual Glass Card */}
               <div style={{
-                borderRadius: 24,
-                overflow: 'hidden',
-                boxShadow: '0 32px 80px rgba(0,0,0,0.14)',
-                border: '4px solid white',
+                background: 'rgba(19, 21, 31, 0.85)',
+                borderRadius: 28,
+                padding: '2rem',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                boxShadow: '0 30px 80px rgba(0,0,0,0.7), 0 0 30px rgba(16, 185, 129, 0.15)',
+                backdropFilter: 'blur(20px)',
               }}>
-                <img src="/hero.jpg" alt="Student working" style={{ width: '100%', display: 'block' }} />
-              </div>
+                {/* Header Mockup Bar */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.75rem', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#ef4444' }} />
+                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#f59e0b' }} />
+                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10b981' }} />
+                  </div>
+                  <span style={{ fontSize: '0.75rem', color: '#10b981', background: 'rgba(16, 185, 129, 0.15)', padding: '0.2rem 0.75rem', borderRadius: 99, fontWeight: 700 }}>
+                    AI Match Engine Active
+                  </span>
+                </div>
 
+                {/* Hero Showcase Mock Card 1 */}
+                <div style={{ background: 'rgba(255, 255, 255, 0.03)', borderRadius: 16, padding: '1.25rem', border: '1px solid rgba(255, 255, 255, 0.08)', marginBottom: '1.25rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                      <div style={{ width: 42, height: 42, borderRadius: 12, background: 'linear-gradient(135deg, #00a4ef, #0078d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff' }}>M</div>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: '1rem', color: '#fff' }}>Software Engineer Intern</div>
+                        <div style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)' }}>Microsoft • Redmond, WA</div>
+                      </div>
+                    </div>
+                    <span className="badge badge-green">94% AI Match</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <span className="skill-chip">React</span>
+                    <span className="skill-chip">FastAPI</span>
+                    <span className="skill-chip">Python</span>
+                    <span className="skill-chip">$45/hr</span>
+                  </div>
+                </div>
+
+                {/* Hero Showcase Mock Card 2 */}
+                <div style={{ background: 'rgba(255, 255, 255, 0.03)', borderRadius: 16, padding: '1.25rem', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                      <div style={{ width: 42, height: 42, borderRadius: 12, background: 'linear-gradient(135deg, #34a853, #1e8e3e)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff' }}>G</div>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: '1rem', color: '#fff' }}>AI Research Associate</div>
+                        <div style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)' }}>Google • Mountain View, CA</div>
+                      </div>
+                    </div>
+                    <span className="badge badge-blue">Shortlisted 🌟</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <span className="skill-chip">PyTorch</span>
+                    <span className="skill-chip">NLP</span>
+                    <span className="skill-chip">LLMs</span>
+                  </div>
+                </div>
+
+              </div>
             </motion.div>
+
           </div>
         </div>
       </section>
 
-      {/* ── COMPANIES ───────────────────────────────── */}
-      <section style={{ padding: '3rem 1rem', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
+      {/* ── TOP COMPANIES ────────────────────────────── */}
+      <section style={{ padding: '3.5rem 1rem', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', background: 'var(--bg-subtle)' }}>
         <div className="container">
-          <p style={{ textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1.5rem' }}>
-            Top companies hiring on Career Planet
+          <p style={{ textAlign: 'center', fontSize: '0.8125rem', color: 'var(--text-tertiary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '2rem' }}>
+            Trusted by top global companies & high-growth startups
           </p>
           <motion.div
             initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-            style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1rem' }}
+            style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1.25rem' }}
           >
             {companies.map(c => (
               <motion.div key={c.name} variants={fadeUp}>
-                <div className="card-flat" style={{
-                  display: 'flex', alignItems: 'center', gap: '0.625rem',
-                  padding: '0.625rem 1rem', borderRadius: 'var(--radius-full)',
+                <div className="glass-card" style={{
+                  display: 'flex', alignItems: 'center', gap: '0.75rem',
+                  padding: '0.625rem 1.25rem', borderRadius: 'var(--radius-full)',
                   cursor: 'default',
-                  transition: 'all 0.15s ease',
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = c.color; e.currentTarget.style.boxShadow = `0 0 0 3px ${c.color}18`; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none'; }}
-                >
-                  <div style={{ width: 28, height: 28, borderRadius: 7, background: c.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '0.6875rem' }}>
+                }}>
+                  <div style={{ width: 26, height: 26, borderRadius: 7, background: c.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '0.75rem' }}>
                     {c.letter}
                   </div>
-                  <span style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-primary)' }}>{c.name}</span>
+                  <span style={{ fontWeight: 600, fontSize: '0.90625rem', color: '#f8fafc' }}>{c.name}</span>
                 </div>
               </motion.div>
             ))}
@@ -141,75 +231,95 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── AI FEATURES ─────────────────────────────── */}
-      <section style={{ padding: '5rem 1rem' }}>
+      {/* ── BENTO GRID AI FEATURES ──────────────────── */}
+      <section style={{ padding: '6rem 1rem' }}>
         <div className="container">
-          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger} style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-            <motion.span variants={fadeUp} className="badge badge-violet" style={{ marginBottom: '1rem', display: 'inline-flex' }}>
-              ✦ AI Features
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger} style={{ textAlign: 'center', marginBottom: '4rem' }}>
+            <motion.span variants={fadeUp} className="badge badge-green" style={{ marginBottom: '1rem', display: 'inline-flex' }}>
+              ✦ Platform Capabilities
             </motion.span>
             <motion.h2 variants={fadeUp} style={{ marginBottom: '1rem' }}>
-              Your AI career partner,<br />
-              <span className="gradient-text">always by your side</span>
+              Everything you need to <span className="gradient-text">accelerate your career</span>
             </motion.h2>
-            <motion.p variants={fadeUp} style={{ fontSize: '1.0625rem', maxWidth: 540, margin: '0 auto' }}>
-              From resume to offer letter — AI handles the heavy lifting so you can focus on what matters.
+            <motion.p variants={fadeUp} style={{ fontSize: '1.1rem', maxWidth: 560, margin: '0 auto', color: 'var(--text-secondary)' }}>
+              From intelligent resume scoring to automated email dispatches, CareerPlanet powers every step of placement.
             </motion.p>
           </motion.div>
 
+          {/* Bento Grid */}
           <motion.div
             initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.25rem' }}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}
           >
             {features.map((f, i) => (
-              <motion.div key={f.title} variants={fadeUp} className="card" style={{ padding: '1.75rem' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>{f.icon}</div>
-                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.0625rem' }}>{f.title}</h3>
-                <p style={{ fontSize: '0.9rem', lineHeight: 1.65 }}>{f.desc}</p>
+              <motion.div 
+                key={f.title} 
+                variants={fadeUp} 
+                className="glass-card" 
+                style={{ 
+                  padding: '2.25rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  gridColumn: i === 0 || i === 3 ? 'span 2' : 'span 1'
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <div style={{ fontSize: '2.25rem' }}>{f.icon}</div>
+                    <span className="badge badge-indigo" style={{ fontSize: '0.75rem' }}>{f.tag}</span>
+                  </div>
+                  <h3 style={{ marginBottom: '0.75rem', fontSize: '1.25rem', color: '#ffffff' }}>{f.title}</h3>
+                  <p style={{ fontSize: '0.9375rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>{f.desc}</p>
+                </div>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* ── CTA ─────────────────────────────────────── */}
-      <section style={{ padding: '5rem 1rem' }}>
+      {/* ── CALL TO ACTION ─────────────────────────── */}
+      <section style={{ padding: '4rem 1rem 6rem' }}>
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6 }}
             style={{
-              textAlign: 'center', padding: '4rem 2rem',
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%)',
-              borderRadius: 28, color: 'white',
-              boxShadow: '0 32px 80px rgba(99,102,241,0.35)',
+              textAlign: 'center', padding: '5rem 2rem',
+              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 182, 212, 0.15) 50%, rgba(139, 92, 246, 0.15) 100%)',
+              borderRadius: 32, color: 'white',
+              border: '1px solid rgba(255,255,255,0.12)',
+              boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(16, 185, 129, 0.15)',
+              position: 'relative',
+              overflow: 'hidden'
             }}
           >
-            <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)' }}>
-              Ready to land your dream job?
+            <h2 style={{ color: 'white', marginBottom: '1.25rem', fontSize: 'clamp(2rem, 4vw, 3rem)' }}>
+              Ready to transform your career trajectory?
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.0625rem', marginBottom: '2rem' }}>
-              Join 50,000+ students already using Career Planet.
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.15rem', marginBottom: '2.5rem', maxWidth: 560, margin: '0 auto 2.5rem' }}>
+              Join thousands of candidates and tier-1 recruiters connecting seamlessly on CareerPlanet today.
             </p>
-            <Link to="/register" className="btn btn-lg" style={{ background: 'white', color: '#6366f1', fontWeight: 700 }}>
-              Start for free →
+            <Link to="/register" className="btn btn-primary btn-lg">
+              Create Free Account →
             </Link>
           </motion.div>
         </div>
       </section>
 
-      {/* ── FOOTER ──────────────────────────────────── */}
-      <footer style={{ borderTop: '1px solid var(--border)', padding: '2rem 1rem', background: 'var(--surface)' }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '0.8rem' }}>C</div>
-            <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>CareerPlanet</span>
+      {/* ── FOOTER ─────────────────────────────────── */}
+      <footer style={{ borderTop: '1px solid var(--border)', padding: '2.5rem 1rem', background: 'var(--bg-subtle)' }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, background: 'linear-gradient(135deg, #10b981, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontWeight: 800, fontSize: '0.85rem' }}>C</div>
+            <span style={{ fontWeight: 800, color: '#ffffff', fontSize: '1.05rem' }}>CareerPlanet</span>
           </div>
-          <p style={{ fontSize: '0.875rem' }}>© 2026 Career Planet. Built for WebVerse Hackathon.</p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)' }}>© 2026 CareerPlanet AI Platform. All rights reserved.</p>
         </div>
       </footer>
+
     </div>
   );
 }

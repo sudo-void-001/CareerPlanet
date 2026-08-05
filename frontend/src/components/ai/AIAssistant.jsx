@@ -3,12 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../api/axios';
 
 const ACTIONS = [
-  { id: 'recommend',  icon: '🎯', label: 'Recommend Jobs',        color: '#6366f1' },
-  { id: 'cover',      icon: '✍️', label: 'Generate Cover Letter', color: '#8b5cf6' },
-  { id: 'interview',  icon: '🎤', label: 'Interview Prep',        color: '#06b6d4' },
-  { id: 'skills',     icon: '📊', label: 'Skill Gap Analysis',    color: '#10b981' },
-  { id: 'roadmap',    icon: '🗺️', label: 'Career Roadmap',        color: '#f59e0b' },
-  { id: 'advice',     icon: '💡', label: 'Career Advice',         color: '#ef4444' },
+  { id: 'recommend',  icon: '🎯', label: 'Recommend Jobs',        color: '#10b981' },
+  { id: 'cover',      icon: '✍️', label: 'Generate Cover Letter', color: '#06b6d4' },
+  { id: 'interview',  icon: '🎤', label: 'Interview Prep',        color: '#8b5cf6' },
+  { id: 'skills',     icon: '📊', label: 'Skill Gap Analysis',    color: '#f59e0b' },
+  { id: 'roadmap',    icon: '🗺️', label: 'Career Roadmap',        color: '#ec4899' },
+  { id: 'advice',     icon: '💡', label: 'Career Advice',         color: '#3b82f6' },
 ];
 
 function parseMarkdown(text) {
@@ -31,7 +31,6 @@ export default function AIAssistant() {
 
   const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
   
-  // Auto scroll to bottom
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
@@ -41,7 +40,6 @@ export default function AIAssistant() {
   const sendMessage = async (text) => {
     if (!text.trim() || loading) return;
 
-    // Add user message
     const userMsg = { sender: 'user', text };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
@@ -71,38 +69,37 @@ export default function AIAssistant() {
       {/* Floating Button */}
       <motion.button
         onClick={() => setOpen(o => !o)}
-        whileHover={{ scale: 1.05 }}
+        whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
         style={{
-          position: 'fixed', bottom: '1.5rem', right: '1.5rem', zIndex: 1000,
-          width: 56, height: 56, borderRadius: '50%',
-          background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-          border: 'none', cursor: 'pointer', color: 'white',
-          fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 8px 32px rgba(99,102,241,0.45)',
+          position: 'fixed', bottom: '1.75rem', right: '1.75rem', zIndex: 1000,
+          width: 58, height: 58, borderRadius: '50%',
+          background: 'linear-gradient(135deg, #10b981, #06b6d4)',
+          border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer', color: '#000',
+          fontSize: '1.5rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 8px 30px rgba(16, 185, 129, 0.45), 0 0 20px rgba(6, 182, 212, 0.3)',
         }}
-        className="pulse-glow"
         title="AI Career Assistant"
       >
         {open ? '✕' : '✦'}
       </motion.button>
 
-      {/* Panel */}
+      {/* Chat Window Panel */}
       <AnimatePresence>
         {open && (
           <motion.div
             initial={{ opacity: 0, y: 24, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
-            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              position: 'fixed', bottom: '5rem', right: '1.5rem', zIndex: 999,
-              width: 380, height: 520, borderRadius: 20,
-              background: 'rgba(255,255,255,0.95)',
+              position: 'fixed', bottom: '5.5rem', right: '1.75rem', zIndex: 999,
+              width: 400, height: 540, borderRadius: 24,
+              background: 'rgba(13, 15, 23, 0.92)',
               backdropFilter: 'blur(24px)',
               WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid rgba(229,231,235,0.8)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              boxShadow: '0 25px 70px rgba(0,0,0,0.8), 0 0 40px rgba(16, 185, 129, 0.15)',
               display: 'flex',
               flexDirection: 'column',
               overflow: 'hidden',
@@ -110,81 +107,84 @@ export default function AIAssistant() {
           >
             {/* Header */}
             <div style={{
-              padding: '1.125rem 1.25rem',
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+              padding: '1.25rem 1.5rem',
+              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.15))',
+              borderBottom: '1px solid rgba(255,255,255,0.08)',
               color: 'white',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-                <span style={{ fontSize: '1.25rem' }}>✦</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #10b981, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontWeight: 800, fontSize: '0.9rem' }}>✦</div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.9375rem', letterSpacing: '-0.01em' }}>AI Career Assistant</div>
-                  <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Powered by Career Planet AI</div>
+                  <div style={{ fontWeight: 700, fontSize: '0.95rem', letterSpacing: '-0.01em', color: '#f8fafc' }}>AI Career Assistant</div>
+                  <div style={{ fontSize: '0.75rem', color: '#34d399' }}>● Groq Intelligence Active</div>
                 </div>
               </div>
               <button 
                 onClick={() => setMessages([{ sender: 'ai', text: 'Hello! I am your AI career assistant. How can I help you today?' }])}
-                style={{ background: 'none', border: 'none', color: 'white', opacity: 0.7, cursor: 'pointer', fontSize: '0.75rem' }}
+                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#94a3b8', borderRadius: 'var(--radius-full)', padding: '0.25rem 0.625rem', cursor: 'pointer', fontSize: '0.75rem' }}
               >
                 Clear
               </button>
             </div>
 
             {/* Messages Box */}
-            <div style={{ flex: 1, padding: '1rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ flex: 1, padding: '1.25rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
               {messages.map((msg, idx) => (
                 <div 
                   key={idx} 
                   style={{
                     alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
                     maxWidth: '85%',
-                    padding: '0.75rem 1rem',
-                    borderRadius: msg.sender === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                    background: msg.sender === 'user' ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : '#f3f4f6',
-                    color: msg.sender === 'user' ? 'white' : '#1f2937',
-                    fontSize: '0.8125rem',
-                    lineHeight: 1.5,
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
+                    padding: '0.875rem 1.125rem',
+                    borderRadius: msg.sender === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
+                    background: msg.sender === 'user' ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255, 255, 255, 0.05)',
+                    border: msg.sender === 'user' ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                    color: msg.sender === 'user' ? '#ffffff' : '#e2e8f0',
+                    fontSize: '0.84375rem',
+                    lineHeight: 1.6,
+                    boxShadow: msg.sender === 'user' ? '0 4px 15px rgba(16, 185, 129, 0.3)' : '0 2px 8px rgba(0,0,0,0.3)'
                   }}
                   dangerouslySetInnerHTML={{ __html: parseMarkdown(msg.text) }}
                 />
               ))}
               
               {loading && (
-                <div style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', background: '#f3f4f6', borderRadius: '16px 16px 16px 4px' }}>
-                  <div className="pulse-glow" style={{ width: 8, height: 8, borderRadius: '50%', background: '#6366f1' }} />
-                  <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>AI is typing...</span>
+                <div style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.125rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '20px 20px 20px 4px', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', animation: 'pulse-glow 1.5s infinite' }} />
+                  <span style={{ fontSize: '0.78125rem', color: '#94a3b8' }}>AI is thinking...</span>
                 </div>
               )}
               <div ref={chatEndRef} />
             </div>
 
             {/* Bottom Actions & Input */}
-            <div style={{ padding: '0.75rem 1rem', borderTop: '1px solid #e5e7eb', background: '#ffffff' }}>
+            <div style={{ padding: '0.875rem 1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)', background: 'rgba(7, 8, 12, 0.95)' }}>
               {/* Quick Actions Scrollable Row */}
-              <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', marginBottom: '0.5rem', scrollbarWidth: 'none' }} className="no-scrollbar">
+              <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.625rem', marginBottom: '0.625rem', scrollbarWidth: 'none' }}>
                 {ACTIONS.map(action => (
                   <button
                     key={action.id}
                     onClick={() => sendMessage(action.label)}
                     style={{
                       whiteSpace: 'nowrap',
-                      padding: '0.375rem 0.75rem',
+                      padding: '0.4rem 0.85rem',
                       borderRadius: '9999px',
-                      border: '1px solid #e5e7eb',
-                      background: '#fff',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      color: '#cbd5e1',
                       fontSize: '0.75rem',
                       fontWeight: 500,
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.25rem',
-                      transition: 'all 0.15s ease'
+                      gap: '0.35rem',
+                      transition: 'all 0.2s ease'
                     }}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = '#6366f1'}
-                    onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e7eb'}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = action.color; e.currentTarget.style.color = '#ffffff'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = '#cbd5e1'; }}
                   >
                     <span>{action.icon}</span>
                     <span>{action.label}</span>
@@ -193,38 +193,28 @@ export default function AIAssistant() {
               </div>
 
               {/* Chat Input Form */}
-              <form onSubmit={handleSend} style={{ display: 'flex', gap: '0.5rem' }}>
+              <form onSubmit={handleSend} style={{ display: 'flex', gap: '0.625rem' }}>
                 <input
                   type="text"
                   value={input}
                   onChange={e => setInput(e.target.value)}
-                  placeholder="Ask a question..."
+                  placeholder="Ask AI anything about your career..."
+                  className="input"
                   style={{
                     flex: 1,
-                    padding: '0.625rem 0.875rem',
-                    borderRadius: '12px',
-                    border: '1px solid #d1d5db',
-                    fontSize: '0.8125rem',
-                    outline: 'none',
-                    fontFamily: 'Inter, sans-serif'
+                    padding: '0.75rem 1rem',
+                    borderRadius: '14px',
+                    fontSize: '0.84375rem',
                   }}
-                  onFocus={e => e.target.style.borderColor = '#6366f1'}
-                  onBlur={e => e.target.style.borderColor = '#d1d5db'}
                 />
                 <button
                   type="submit"
                   disabled={!input.trim() || loading}
+                  className="btn btn-primary"
                   style={{
-                    padding: '0.625rem 1rem',
-                    borderRadius: '12px',
-                    border: 'none',
-                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                    color: 'white',
-                    fontWeight: 600,
-                    fontSize: '0.8125rem',
-                    cursor: 'pointer',
-                    opacity: (!input.trim() || loading) ? 0.6 : 1,
-                    transition: 'all 0.15s ease'
+                    borderRadius: '14px',
+                    padding: '0.75rem 1.25rem',
+                    opacity: (!input.trim() || loading) ? 0.5 : 1,
                   }}
                 >
                   Send
