@@ -258,7 +258,7 @@ const Profile = () => {
                   </p>
                 </div>
                 <button 
-                  onClick={() => navigate('/student/resume')}
+                  onClick={() => navigate('/resume')}
                   style={{ padding: '0.75rem 1.5rem', backgroundColor: hasResume ? '#fff' : '#ea580c', color: hasResume ? '#166534' : '#fff', border: hasResume ? '1px solid #bbf7d0' : 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s', boxShadow: hasResume ? 'none' : '0 4px 6px -1px rgba(234, 88, 12, 0.2)' }}
                 >
                   {hasResume ? 'View Analysis' : 'Upload Resume'}

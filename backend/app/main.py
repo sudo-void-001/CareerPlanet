@@ -1,23 +1,31 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import auth, jobs, applications, resume, admin, ai
-from app.core.database import engine, Base, SessionLocal
-from app.models.user import User, UserRole
-from app.core.security import get_password_hash
+from app.core.database import engine, Base
+from dotenv import load_dotenv
 
-# Create all tables in the database (For development, skipping migrations for speed)
+load_dotenv()
+
+# Create all tables
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Career Planet API", version="1.0.0")
+app = FastAPI(title="Career Planet API", version="1.0.0", docs_url="/docs")
 
-# Setup CORS
+# Dynamic CORS: reads from env for production, defaults to localhost for dev
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5173,http://localhost:3000"
+).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(jobs.router, prefix="/api/jobs", tags=["jobs"])

@@ -43,12 +43,14 @@ export default function AIAssistant() {
 
     // Add user message
     const userMsg = { sender: 'user', text };
-    setMessages(prev => [...prev, userMsg]);
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setInput('');
     setLoading(true);
 
     try {
-      const res = await api.post('/ai/chat', { prompt: text });
+      const payloadMessages = updatedMessages.map(m => ({ role: m.sender, content: m.text }));
+      const res = await api.post('/ai/chat', { messages: payloadMessages });
       const aiResponse = res.data.response || res.data.message || res.data.reply || res.data || "Success";
       setMessages(prev => [...prev, { sender: 'ai', text: aiResponse }]);
     } catch (err) {

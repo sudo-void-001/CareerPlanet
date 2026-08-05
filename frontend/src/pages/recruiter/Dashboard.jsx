@@ -10,7 +10,7 @@ const TABS = [
   { id: 'applications', label: 'Applications',   icon: '📋' },
 ];
 
-const statusOptions = ['pending', 'reviewing', 'shortlisted', 'rejected', 'hired'];
+const statusOptions = ['pending', 'reviewing', 'shortlisted', 'interview', 'rejected', 'selected', 'hired'];
 
 // ── Post Job Modal ────────────────────────────────────────────
 function PostJobModal({ onClose, onSuccess, companyName }) {
@@ -43,7 +43,7 @@ function PostJobModal({ onClose, onSuccess, companyName }) {
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(4px)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
         onClick={onClose}
       >
         <motion.div
@@ -134,7 +134,7 @@ function PostJobModal({ onClose, onSuccess, companyName }) {
 
 // ── Tab: Overview ─────────────────────────────────────────────
 function OverviewTab({ applications, jobs, user, onPostJob, isProfileComplete }) {
-  const shortlisted = applications.filter(a => a.status === 'shortlisted' || a.status === 'hired').length;
+  const shortlisted = applications.filter(a => ['shortlisted', 'interview', 'hired', 'selected'].includes(a.status)).length;
   const pending = applications.filter(a => a.status === 'pending').length;
   const reviewing = applications.filter(a => a.status === 'reviewing').length;
 
@@ -142,14 +142,15 @@ function OverviewTab({ applications, jobs, user, onPostJob, isProfileComplete })
     { label: 'Active Jobs',          value: jobs.length,           icon: '💼', color: '#6366f1' },
     { label: 'Total Applications',   value: applications.length,   icon: '📋', color: '#f59e0b' },
     { label: 'Pending Review',       value: pending,               icon: '⏳', color: '#06b6d4' },
-    { label: 'Shortlisted / Hired',  value: shortlisted,           icon: '⭐', color: '#10b981' },
+    { label: 'Shortlisted / Interview',  value: shortlisted,           icon: '⭐', color: '#10b981' },
   ];
 
   const pipeline = [
     { label: 'Pending',    count: pending,                                                         color: '#f59e0b' },
     { label: 'Reviewing',  count: reviewing,                                                       color: '#6366f1' },
     { label: 'Shortlisted',count: applications.filter(a => a.status === 'shortlisted').length,    color: '#10b981' },
-    { label: 'Hired',      count: applications.filter(a => a.status === 'hired').length,           color: '#059669' },
+    { label: 'Interview',  count: applications.filter(a => a.status === 'interview').length,      color: '#8b5cf6' },
+    { label: 'Selected',   count: applications.filter(a => a.status === 'selected').length,       color: '#059669' },
     { label: 'Rejected',   count: applications.filter(a => a.status === 'rejected').length,        color: '#ef4444' },
   ];
 
@@ -157,7 +158,6 @@ function OverviewTab({ applications, jobs, user, onPostJob, isProfileComplete })
 
   return (
     <motion.div key="overview" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-      {/* Profile incomplete warning */}
       {!isProfileComplete && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 14, padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
@@ -171,7 +171,6 @@ function OverviewTab({ applications, jobs, user, onPostJob, isProfileComplete })
         </motion.div>
       )}
 
-      {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
         {stats.map((s, i) => (
           <motion.div
@@ -190,7 +189,6 @@ function OverviewTab({ applications, jobs, user, onPostJob, isProfileComplete })
         ))}
       </div>
 
-      {/* Pipeline bar */}
       <div style={{ background: 'white', borderRadius: 16, border: '1px solid var(--border)', padding: '1.25rem 1.5rem', marginBottom: '1.5rem', boxShadow: 'var(--shadow-sm)' }}>
         <h3 style={{ margin: '0 0 1rem' }}>Application Pipeline</h3>
         <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', height: 10, marginBottom: '0.875rem' }}>
@@ -215,7 +213,6 @@ function OverviewTab({ applications, jobs, user, onPostJob, isProfileComplete })
         </div>
       </div>
 
-      {/* Quick action */}
       <motion.button
         whileHover={{ scale: 1.01, boxShadow: '0 12px 40px var(--gradient-glow, rgba(99,102,241,0.35))' }}
         whileTap={{ scale: 0.99 }}
@@ -301,6 +298,8 @@ function JobsTab({ jobs, onPostJob, isProfileComplete }) {
 function AppDetailModal({ appId, onClose }) {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [customMessage, setCustomMessage] = useState('');
+  const [sendingMsg, setSendingMsg] = useState(false);
 
   useEffect(() => {
     api.get(`/applications/${appId}/detail`)
@@ -309,58 +308,145 @@ function AppDetailModal({ appId, onClose }) {
       .finally(() => setLoading(false));
   }, [appId]);
 
+  const handleSendMessage = async () => {
+    if (!customMessage.trim()) return;
+    setSendingMsg(true);
+    try {
+      await api.put(`/applications/${appId}/status`, { status: detail.status, recruiter_message: customMessage });
+      setCustomMessage('');
+      alert("Message queued for dispatch via Resend API!");
+    } catch (e) {
+      alert("Failed to send message.");
+    } finally {
+      setSendingMsg(false);
+    }
+  };
+
   return (
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         onClick={onClose}
-        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(4px)', zIndex: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 16 }}
           onClick={e => e.stopPropagation()}
-          style={{ background: 'white', borderRadius: 20, width: '100%', maxWidth: 460, boxShadow: '0 32px 80px rgba(0,0,0,0.2)', overflow: 'hidden' }}
+          style={{ background: 'white', borderRadius: 20, width: '100%', maxWidth: 540, boxShadow: '0 32px 80px rgba(0,0,0,0.2)', overflow: 'hidden' }}
         >
           {/* Header */}
           <div style={{ padding: '1.125rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--gradient, linear-gradient(135deg,#6366f1,#8b5cf6))' }}>
             <div style={{ color: 'white' }}>
-              <div style={{ fontWeight: 700, fontSize: '0.9375rem' }}>📄 Application Details</div>
-              <div style={{ fontSize: '0.75rem', opacity: 0.85 }}>Applicant Information & Resume</div>
+              <div style={{ fontWeight: 700, fontSize: '1rem' }}>📄 Application Report Center</div>
+              <div style={{ fontSize: '0.75rem', opacity: 0.85 }}>Applicant Assessment & Resume AI</div>
             </div>
             <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: 8, color: 'white', cursor: 'pointer', padding: '0.375rem 0.625rem', fontSize: '1rem' }}>✕</button>
           </div>
 
-          <div style={{ padding: '1.5rem' }}>
+          <div style={{ padding: '1.5rem', maxHeight: '80vh', overflowY: 'auto' }}>
             {loading ? (
               <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Loading applicant details...</div>
             ) : !detail ? (
               <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--danger)' }}>Failed to load details.</div>
             ) : (
               <>
-                {/* Student Info – like an email card */}
-                <div style={{ background: 'var(--surface-2)', borderRadius: 14, padding: '1.125rem', marginBottom: '1rem', border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem' }}>Applicant</div>
+                {/* Student Identity Card */}
+                <div style={{ background: 'var(--surface-2)', borderRadius: 14, padding: '1.125rem', marginBottom: '1.25rem', border: '1px solid var(--border)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
                     <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--gradient, linear-gradient(135deg,#6366f1,#8b5cf6))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.125rem', flexShrink: 0 }}>
                       {detail.student?.name?.charAt(0).toUpperCase()}
                     </div>
-                    <div>
+                    <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>{detail.student?.name}</div>
                       <a href={`mailto:${detail.student?.email}`} style={{ fontSize: '0.875rem', color: 'var(--primary)', textDecoration: 'none' }}>
                         ✉️ {detail.student?.email}
                       </a>
                     </div>
                   </div>
+                  {detail.student?.bio && (
+                    <p style={{ margin: '0.75rem 0 0', fontSize: '0.8125rem', color: 'var(--text-secondary)', background: 'white', padding: '0.5rem 0.75rem', borderRadius: 8, border: '1px solid #f1f5f9' }}>
+                      {detail.student.bio}
+                    </p>
+                  )}
+                  {detail.cover_letter && (
+                    <div style={{ marginTop: '1rem', padding: '1rem', background: '#f5f3ff', borderLeft: '4px solid #8b5cf6', borderRadius: '4px 8px 8px 4px' }}>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6d28d9', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Cover Letter</div>
+                      <p style={{ margin: 0, fontSize: '0.875rem', color: '#4c1d95', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{detail.cover_letter}</p>
+                    </div>
+                  )}
                 </div>
 
-                {/* Resume Card */}
+                {/* AI Analysis Report Card */}
+                {detail.ai_analysis ? (
+                  <div style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.04), rgba(139,92,246,0.04))', borderRadius: 16, padding: '1.25rem', border: '1px solid rgba(99,102,241,0.15)', marginBottom: '1.25rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>🧠 CareerPlanet AI Match</span>
+                      <span style={{ fontSize: '0.875rem', background: '#d1fae5', color: '#065f46', padding: '0.15rem 0.5rem', borderRadius: '6px', fontWeight: 700 }}>
+                        {detail.ai_analysis.match_score || 75}% Fit
+                      </span>
+                    </div>
+
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: '0 0 1rem', background: 'white', padding: '0.75rem', borderRadius: 8, border: '1px solid #f1f5f9' }}>
+                      {detail.ai_analysis.summary || 'Summary analysis not available.'}
+                    </p>
+
+                    {detail.ai_analysis.missing_skills && (
+                      <div style={{ marginBottom: '0.75rem' }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#b45309', marginBottom: '0.25rem' }}>⚠️ Missing Competencies:</div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
+                          {detail.ai_analysis.missing_skills.split(',').map((s, idx) => (
+                            <span key={idx} style={{ fontSize: '0.75rem', background: '#fff7ed', color: '#c2410c', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 600 }}>{s.trim()}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {detail.ai_analysis.recommendations && (
+                      <div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '0.25rem' }}>💡 Next Steps & Recommendations:</div>
+                        <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                          {detail.ai_analysis.recommendations}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div style={{ background: '#f8fafc', borderRadius: 14, padding: '1rem', border: '1px solid var(--border)', marginBottom: '1.25rem', fontSize: '0.8125rem', color: 'var(--text-secondary)', textAlign: 'center' }}>
+                    🤖 Upload a text-based resume to generate matches and AI coaching analysis report.
+                  </div>
+                )}
+
+                {/* Email Delivery Checklist */}
+                <div style={{ background: '#fafafa', borderRadius: 14, padding: '1.125rem', border: '1px solid var(--border)', marginBottom: '1.25rem' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem' }}>📬 Communication Log</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                    <div style={{ fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                      <span>{detail.application_email_sent ? '✅' : '⏳'}</span>
+                      <span style={{ color: detail.application_email_sent ? '#065f46' : 'var(--text-secondary)' }}>Recruiter Alert</span>
+                    </div>
+                    <div style={{ fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                      <span>{detail.shortlist_email_sent ? '✅' : '⏳'}</span>
+                      <span style={{ color: detail.shortlist_email_sent ? '#065f46' : 'var(--text-secondary)' }}>Shortlist Email</span>
+                    </div>
+                    <div style={{ fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                      <span>{detail.interview_email_sent ? '✅' : '⏳'}</span>
+                      <span style={{ color: detail.interview_email_sent ? '#065f46' : 'var(--text-secondary)' }}>Interview Invite</span>
+                    </div>
+                    <div style={{ fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                      <span>{detail.selection_email_sent ? '✅' : '⏳'}</span>
+                      <span style={{ color: detail.selection_email_sent ? '#065f46' : 'var(--text-secondary)' }}>Offer Letter</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Resume Download / Actions */}
                 {detail.resume ? (
                   <div style={{ background: '#f0fdf4', borderRadius: 14, padding: '1.125rem', border: '1px solid #bbf7d0', marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#065f46', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.5rem' }}>📎 Resume Attached</div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#065f46', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.5rem' }}>📎 Student Resume File</div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
-                      <div style={{ fontSize: '0.875rem', color: '#047857', fontWeight: 500, wordBreak: 'break-all' }}>{detail.resume.filename}</div>
+                      <div style={{ fontSize: '0.8125rem', color: '#047857', fontWeight: 600, wordBreak: 'break-all' }}>{detail.resume.filename}</div>
                       <a
                         href={`http://localhost:8000${detail.resume.download_url}?token=${localStorage.getItem('token')}`}
                         download
@@ -368,20 +454,36 @@ function AppDetailModal({ appId, onClose }) {
                         rel="noreferrer"
                         style={{ flexShrink: 0 }}
                       >
-                        <button className="btn btn-primary btn-sm" style={{ whiteSpace: 'nowrap' }}>⬇ Download</button>
+                        <button className="btn btn-primary btn-sm" style={{ whiteSpace: 'nowrap' }}>Download Resume</button>
                       </a>
                     </div>
                   </div>
                 ) : (
-                  <div style={{ background: '#fff7ed', borderRadius: 14, padding: '1rem', border: '1px solid #fed7aa', marginBottom: '1.25rem', fontSize: '0.875rem', color: '#c2410c' }}>
-                    ⚠️ No resume uploaded by this applicant.
+                  <div style={{ background: '#fff7ed', borderRadius: 14, padding: '1rem', border: '1px solid #fed7aa', marginBottom: '1.25rem', fontSize: '0.875rem', color: '#c2410c', textAlign: 'center' }}>
+                    ⚠️ No physical resume file found for download.
                   </div>
                 )}
 
+                <div style={{ background: '#f8fafc', borderRadius: 14, padding: '1.25rem', border: '1px solid var(--border)', marginBottom: '1.25rem' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem' }}>✉️ Send Custom Letter</div>
+                  <textarea 
+                    value={customMessage}
+                    onChange={(e) => setCustomMessage(e.target.value)}
+                    placeholder="Write a custom message or feedback to the student..."
+                    rows={3}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: 8, border: '1px solid var(--border)', marginBottom: '0.75rem', resize: 'vertical', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
+                  />
+                  <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    <button onClick={handleSendMessage} disabled={sendingMsg || !customMessage.trim()} className="btn btn-primary" style={{ width: '100%' }}>
+                      {sendingMsg ? 'Sending...' : 'Dispatch Letter via Resend'}
+                    </button>
+                  </div>
+                </div>
+
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
-                  <button onClick={onClose} className="btn btn-secondary" style={{ flex: 1 }}>Close</button>
-                  <a href={`mailto:${detail.student?.email}?subject=Regarding Your Application&body=Hi ${detail.student?.name?.split(' ')[0]},`} style={{ flex: 2 }}>
-                    <button className="btn btn-primary" style={{ width: '100%' }}>📧 Email Applicant</button>
+                  <button onClick={onClose} className="btn btn-secondary" style={{ flex: 1 }}>Close Report</button>
+                  <a href={`mailto:${detail.student?.email}?subject=CareerPlanet Application Update&body=Hi ${detail.student?.name?.split(' ')[0]},`} style={{ flex: 1.5 }}>
+                    <button className="btn btn-secondary" style={{ width: '100%' }}>Open Email Client</button>
                   </a>
                 </div>
               </>
@@ -415,6 +517,7 @@ function ApplicationsTab({ applications, jobs, updateStatus }) {
                 <th>Job Role</th>
                 <th>Applicant</th>
                 <th>Current Status</th>
+                <th>Email Track</th>
                 <th>Update Status</th>
               </tr>
             </thead>
@@ -440,6 +543,13 @@ function ApplicationsTab({ applications, jobs, updateStatus }) {
                   </td>
                   <td><StatusBadge status={app.status} /></td>
                   <td>
+                    {app.application_email_sent ? (
+                      <span style={{ fontSize: '0.75rem', background: '#d1fae5', color: '#065f46', padding: '0.2rem 0.5rem', borderRadius: 6, fontWeight: 700 }}>✉️ Sent</span>
+                    ) : (
+                      <span style={{ fontSize: '0.75rem', background: '#f3f4f6', color: '#6b7280', padding: '0.2rem 0.5rem', borderRadius: 6, fontWeight: 600 }}>📨 Pending</span>
+                    )}
+                  </td>
+                  <td>
                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                       <select
                         value={app.status}
@@ -453,8 +563,8 @@ function ApplicationsTab({ applications, jobs, updateStatus }) {
                         onClick={() => setViewingAppId(app.id)}
                         className="btn btn-ghost btn-sm"
                         style={{ whiteSpace: 'nowrap', fontSize: '0.75rem', padding: '0.375rem 0.625rem' }}
-                        title="View applicant details & resume"
-                      >👁 View</button>
+                        title="View applicant report & resume"
+                      >👁 Report</button>
                     </div>
                   </td>
                 </motion.tr>
@@ -480,6 +590,7 @@ export default function RecruiterDashboard() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [isPostModalOpen, setPostModalOpen] = useState(false);
+  const [showToast, setShowToast] = useState('');
   const navigate = useNavigate();
 
   const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
@@ -494,7 +605,6 @@ export default function RecruiterDashboard() {
 
   useEffect(() => { fetchData(); }, []);
 
-  // Also refresh user from /me to get latest company profile
   useEffect(() => {
     api.get('/auth/me').then(res => {
       localStorage.setItem('user', JSON.stringify(res.data));
@@ -505,7 +615,13 @@ export default function RecruiterDashboard() {
     try {
       const res = await api.put(`/applications/${appId}/status`, { status });
       setApplications(prev => prev.map(a => a.id === appId ? { ...a, status: res.data.status } : a));
-    } catch { alert('Failed to update status'); }
+      
+      // Premium Status Change Email Toast Alert
+      setShowToast(`Status updated! Email queued for dispatch: ${status.toUpperCase()}`);
+      setTimeout(() => setShowToast(''), 5000);
+    } catch { 
+      alert('Failed to update status'); 
+    }
   };
 
   const handlePostJob = () => {
@@ -536,6 +652,28 @@ export default function RecruiterDashboard() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', padding: '2rem 1rem 4rem' }}>
       <div className="container">
+        
+        {/* Toast Alert */}
+        <AnimatePresence>
+          {showToast && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20, x: '-50%' }}
+              animate={{ opacity: 1, y: 0, x: '-50%' }}
+              exit={{ opacity: 0, y: -20, x: '-50%' }}
+              style={{
+                position: 'fixed', top: '24px', left: '50%',
+                background: 'linear-gradient(135deg, #10b981, #059669)',
+                color: 'white', fontWeight: 700, padding: '0.875rem 1.5rem',
+                borderRadius: '12px', boxShadow: '0 20px 40px rgba(16,185,129,0.3)',
+                zIndex: 1000, display: 'flex', alignItems: 'center', gap: '0.5rem',
+                fontSize: '0.875rem'
+              }}
+            >
+              🚀 {showToast}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
 
           {/* Header */}
@@ -631,6 +769,10 @@ export default function RecruiterDashboard() {
           onSuccess={() => { setPostModalOpen(false); fetchData(); }}
         />
       )}
+      
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 }

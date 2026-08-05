@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../api/axios';
-import { StatusBadge } from '../../components/common/UI'; // Adjust path if necessary
+import { StatusBadge } from '../../components/common/UI';
 import { FiBriefcase, FiMapPin, FiClock, FiSearch } from 'react-icons/fi';
-import { formatDistanceToNow } from 'date-fns';
 
 const Applications = () => {
   const [applications, setApplications] = useState([]);
@@ -21,7 +20,7 @@ const Applications = () => {
         
         const jobMap = {};
         jobsRes.data.forEach(job => {
-          jobMap[job._id] = job;
+          jobMap[job.id] = job;
         });
 
         setJobs(jobMap);
@@ -37,25 +36,40 @@ const Applications = () => {
 
   const stats = {
     total: applications.length,
-    inProgress: applications.filter(a => ['applied', 'reviewing', 'interview'].includes(a.status)).length,
-    shortlisted: applications.filter(a => a.status === 'shortlisted').length,
+    inProgress: applications.filter(a => ['pending', 'reviewing', 'shortlisted', 'interview'].includes(a.status)).length,
+    shortlisted: applications.filter(a => ['shortlisted', 'interview', 'hired', 'selected'].includes(a.status)).length,
     rejected: applications.filter(a => a.status === 'rejected').length
   };
 
   const getFilteredApps = () => {
     if (filter === 'All') return applications;
-    if (filter === 'In Progress') return applications.filter(a => ['applied', 'reviewing', 'interview'].includes(a.status));
+    if (filter === 'In Progress') {
+      return applications.filter(a => ['pending', 'reviewing', 'shortlisted', 'interview'].includes(a.status));
+    }
     return applications.filter(a => a.status.toLowerCase() === filter.toLowerCase());
   };
 
   const filteredApps = getFilteredApps();
 
   const getDomainFromCompany = (companyName) => {
-    return companyName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com'; // Simple fallback approximation
+    return (companyName || '').toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
   };
 
   const getInitials = (name) => {
     return name ? name.substring(0, 2).toUpperCase() : 'CO';
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'Recently';
+    try {
+      const diff = new Date() - new Date(dateStr);
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      if (days <= 0) return 'Today';
+      if (days === 1) return 'Yesterday';
+      return `${days} days ago`;
+    } catch {
+      return 'Recently';
+    }
   };
 
   return (
@@ -66,12 +80,13 @@ const Applications = () => {
         style={styles.header}
       >
         <h1 style={styles.pageTitle}>My Applications</h1>
-        <p style={styles.pageSubtitle}>Track your career journey and application status.</p>
+        <p style={styles.pageSubtitle}>Track your career journey and real-time email status.</p>
       </motion.div>
 
+      {/* Stats Cards */}
       <div style={styles.statsContainer}>
         {[
-          { label: 'Total Applied', value: stats.total, color: '#3b82f6', bg: '#eff6ff' },
+          { label: 'Total Applied', value: stats.total, color: '#6366f1', bg: '#e0e7ff' },
           { label: 'In Progress', value: stats.inProgress, color: '#f59e0b', bg: '#fffbeb' },
           { label: 'Shortlisted', value: stats.shortlisted, color: '#10b981', bg: '#ecfdf5' },
           { label: 'Rejected', value: stats.rejected, color: '#ef4444', bg: '#fef2f2' }
@@ -91,6 +106,7 @@ const Applications = () => {
         ))}
       </div>
 
+      {/* Tabs */}
       <div style={styles.filterTabs}>
         {['All', 'In Progress', 'Shortlisted', 'Rejected'].map(tab => (
           <button
@@ -98,9 +114,10 @@ const Applications = () => {
             onClick={() => setFilter(tab)}
             style={{
               ...styles.tabButton,
-              backgroundColor: filter === tab ? '#0f172a' : 'transparent',
+              backgroundColor: filter === tab ? 'var(--primary)' : 'transparent',
               color: filter === tab ? '#fff' : '#64748b',
-              border: filter === tab ? '1px solid #0f172a' : '1px solid #e2e8f0'
+              border: filter === tab ? '1px solid var(--primary)' : '1px solid #e2e8f0',
+              boxShadow: filter === tab ? '0 4px 12px rgba(99,102,241,0.25)' : 'none'
             }}
           >
             {tab}
@@ -108,30 +125,37 @@ const Applications = () => {
         ))}
       </div>
 
+      {/* Applications List */}
       <div style={styles.appList}>
         {loading ? (
-          <div style={styles.loader}>Loading applications...</div>
+          <div style={styles.loader}>
+            <div className="spinner" style={{ width: '32px', height: '32px', border: '3px solid #e5e7eb', borderTopColor: '#6366f1', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 1rem' }} />
+            Loading your applications...
+          </div>
         ) : filteredApps.length > 0 ? (
           <AnimatePresence>
             {filteredApps.map((app, index) => {
-              const job = jobs[app.jobId] || {};
-              const companyName = job.company || 'Unknown Company';
-              const domain = job.website || getDomainFromCompany(companyName);
+              const job = jobs[app.job_id] || {};
+              const companyName = job.company_name || 'Unknown Company';
+              const domain = getDomainFromCompany(companyName);
               const logoUrl = `https://logo.clearbit.com/${domain}`;
               
-              const timelineSteps = ['applied', 'reviewing', 'shortlisted', 'hired'];
+              const timelineSteps = ['pending', 'reviewing', 'shortlisted', 'interview', 'selected'];
               let currentStepIndex = timelineSteps.indexOf(app.status.toLowerCase());
-              if(currentStepIndex === -1 && app.status.toLowerCase() === 'interview') currentStepIndex = 1;
+              if (currentStepIndex === -1 && app.status.toLowerCase() === 'hired') {
+                currentStepIndex = 4;
+              }
 
               return (
                 <motion.div
-                  key={app._id}
+                  key={app.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: index * 0.05 }}
                   style={styles.appCard}
                 >
+                  {/* Card Top / Company Header */}
                   <div style={styles.cardHeader}>
                     <div style={styles.companyInfo}>
                       <img 
@@ -146,57 +170,118 @@ const Applications = () => {
                       />
                       <div style={styles.logoFallback}>{getInitials(companyName)}</div>
                       <div>
-                        <h3 style={styles.jobTitle}>{job.title || 'Job Title'}</h3>
+                        <h3 style={styles.jobTitle}>{job.title || 'Job Role'}</h3>
                         <p style={styles.companyName}>{companyName}</p>
                       </div>
                     </div>
-                    {StatusBadge ? <StatusBadge status={app.status} /> : <span style={styles.fallbackBadge}>{app.status.toUpperCase()}</span>}
+                    
+                    {/* Status Badge + Score */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
+                      {StatusBadge ? <StatusBadge status={app.status} /> : <span style={styles.fallbackBadge}>{app.status.toUpperCase()}</span>}
+                      {/* Email System Delivery Status Badges */}
+                      <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                        {app.application_email_sent && (
+                          <span style={{ fontSize: '0.6875rem', background: '#d1fae5', color: '#065f46', padding: '0.2rem 0.5rem', borderRadius: 4, fontWeight: 700 }}>✉️ Recruiter Emailed</span>
+                        )}
+                        {app.shortlist_email_sent && (
+                          <span style={{ fontSize: '0.6875rem', background: '#dbeafe', color: '#1e40af', padding: '0.2rem 0.5rem', borderRadius: 4, fontWeight: 700 }}>🌟 Shortlist Emailed</span>
+                        )}
+                        {app.interview_email_sent && (
+                          <span style={{ fontSize: '0.6875rem', background: '#e0e7ff', color: '#4338ca', padding: '0.2rem 0.5rem', borderRadius: 4, fontWeight: 700 }}>🎤 Interview Emailed</span>
+                        )}
+                        {app.selection_email_sent && (
+                          <span style={{ fontSize: '0.6875rem', background: '#fef3c7', color: '#92400e', padding: '0.2rem 0.5rem', borderRadius: 4, fontWeight: 700 }}>🎉 Offer Emailed</span>
+                        )}
+                        {app.rejection_email_sent && (
+                          <span style={{ fontSize: '0.6875rem', background: '#fee2e2', color: '#991b1b', padding: '0.2rem 0.5rem', borderRadius: 4, fontWeight: 700 }}>💌 Status Emailed</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
+                  {/* Metadata line */}
                   <div style={styles.jobDetails}>
                     <div style={styles.detailItem}>
                       <FiMapPin style={styles.detailIcon} /> {job.location || 'Remote'}
                     </div>
                     <div style={styles.detailItem}>
-                      <FiBriefcase style={styles.detailIcon} /> {job.type || 'Full-time'}
+                      <FiBriefcase style={styles.detailIcon} /> {job.job_type || 'Full Time'}
                     </div>
                     <div style={styles.detailItem}>
-                      <FiClock style={styles.detailIcon} /> 
-                      {app.appliedAt ? formatDistanceToNow(new Date(app.appliedAt), { addSuffix: true }) : 'Recently'}
+                      <FiClock style={styles.detailIcon} /> {formatDate(app.applied_at)}
                     </div>
                   </div>
 
-                  {app.status.toLowerCase() !== 'rejected' && (
-                    <div style={styles.timelineContainer}>
-                      {timelineSteps.map((step, idx) => (
-                        <React.Fragment key={step}>
-                          <div style={{
-                            ...styles.timelineDot,
-                            backgroundColor: idx <= currentStepIndex ? '#10b981' : '#e2e8f0',
-                            borderColor: idx <= currentStepIndex ? '#10b981' : '#cbd5e1'
-                          }}>
-                            {idx <= currentStepIndex && <div style={styles.dotInner} />}
-                          </div>
-                          <span style={{
-                            ...styles.timelineText,
-                            color: idx <= currentStepIndex ? '#0f172a' : '#94a3b8',
-                            fontWeight: idx === currentStepIndex ? 600 : 400
-                          }}>
-                            {step.charAt(0).toUpperCase() + step.slice(1)}
-                          </span>
-                          {idx < timelineSteps.length - 1 && (
-                            <div style={{
-                              ...styles.timelineLine,
-                              backgroundColor: idx < currentStepIndex ? '#10b981' : '#f1f5f9'
-                            }} />
-                          )}
-                        </React.Fragment>
-                      ))}
+                  {/* Horizontal Progress Timeline */}
+                  {app.status.toLowerCase() !== 'rejected' ? (
+                    <div style={styles.timelineWrapper}>
+                      <div style={styles.timelineStepsRow}>
+                        {timelineSteps.map((step, idx) => {
+                          const isActive = idx <= currentStepIndex;
+                          const isCurrent = idx === currentStepIndex;
+                          
+                          return (
+                            <div key={step} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
+                              
+                              {/* Left connect line */}
+                              {idx > 0 && (
+                                <div style={{
+                                  position: 'absolute',
+                                  left: '-50%',
+                                  right: '50%',
+                                  top: '12px',
+                                  height: '3px',
+                                  background: idx <= currentStepIndex ? '#10b981' : '#e2e8f0',
+                                  zIndex: 1
+                                }} />
+                              )}
+
+                              {/* Dot */}
+                              <div style={{
+                                width: '26px',
+                                height: '26px',
+                                borderRadius: '50%',
+                                border: '2.5px solid',
+                                borderColor: isActive ? '#10b981' : '#cbd5e1',
+                                backgroundColor: isCurrent ? '#10b981' : '#white',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: 2,
+                                boxShadow: isCurrent ? '0 0 10px rgba(16,185,129,0.5)' : 'none',
+                                animation: isCurrent ? 'pulse-glow-green 2s infinite' : 'none'
+                              }}>
+                                {isActive && <div style={{ width: '8px', height: '8px', backgroundColor: isCurrent ? 'white' : '#10b981', borderRadius: '50%' }} />}
+                              </div>
+
+                              {/* Label */}
+                              <span style={{
+                                marginTop: '0.5rem',
+                                fontSize: '0.75rem',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.04em',
+                                color: isCurrent ? '#10b981' : isActive ? '#334155' : '#94a3b8',
+                                fontWeight: isActive ? 700 : 500,
+                                textAlign: 'center'
+                              }}>
+                                {step}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={styles.rejectedBanner}>
+                      🚫 This application has been rejected. CareerPlanet recommends using the AI assistant to upgrade skills before applying again.
                     </div>
                   )}
-                  {app.status.toLowerCase() === 'rejected' && (
-                    <div style={styles.rejectedBanner}>
-                      This application was not moved forward. Keep applying!
+
+                  {/* Recruiter Custom Message */}
+                  {app.recruiter_message && (
+                    <div style={{ padding: '1rem', background: '#f5f3ff', borderLeft: '4px solid #8b5cf6', borderRadius: '0 0 16px 16px' }}>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6d28d9', marginBottom: '0.5rem', textTransform: 'uppercase' }}>✉️ Message from Recruiter</div>
+                      <p style={{ margin: 0, fontSize: '0.875rem', color: '#4c1d95', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{app.recruiter_message}</p>
                     </div>
                   )}
                 </motion.div>
@@ -210,10 +295,10 @@ const Applications = () => {
             style={styles.emptyState}
           >
             <div style={styles.emptyIcon}>🚀</div>
-            <h3 style={styles.emptyTitle}>No applications found</h3>
-            <p style={styles.emptyText}>You haven't applied to any jobs that match this filter yet.</p>
+            <h3 style={styles.emptyTitle}>No applications yet</h3>
+            <p style={styles.emptyText}>You haven't submitted any applications for this filter status yet.</p>
             <button style={styles.browseJobsBtn} onClick={() => window.location.href = '/jobs'}>
-              <FiSearch style={{marginRight: '8px'}}/> Browse Jobs
+              <FiSearch style={{ marginRight: '8px' }}/> Find Internships & Jobs
             </button>
           </motion.div>
         )}
@@ -246,44 +331,44 @@ const styles = {
   },
   statsContainer: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-    gap: '1.5rem',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gap: '1.25rem',
     marginBottom: '3rem',
   },
   statCard: {
-    padding: '1.5rem',
+    padding: '1.25rem 1.5rem',
     borderRadius: '16px',
     display: 'flex',
     alignItems: 'center',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.03)',
   },
   statInfo: {
     display: 'flex',
     flexDirection: 'column',
   },
   statLabel: {
-    fontSize: '0.875rem',
-    fontWeight: 600,
+    fontSize: '0.75rem',
+    fontWeight: 700,
     color: '#475569',
     textTransform: 'uppercase',
-    letterSpacing: '0.05em',
+    letterSpacing: '0.08em',
   },
   statValue: {
-    fontSize: '2.5rem',
+    fontSize: '2.25rem',
     fontWeight: 800,
-    marginTop: '0.25rem',
+    marginTop: '0.125rem',
   },
   filterTabs: {
     display: 'flex',
-    gap: '1rem',
+    gap: '0.75rem',
     marginBottom: '2rem',
     flexWrap: 'wrap',
   },
   tabButton: {
     padding: '0.5rem 1.25rem',
     borderRadius: '9999px',
-    fontSize: '0.875rem',
-    fontWeight: 600,
+    fontSize: '0.8125rem',
+    fontWeight: 700,
     cursor: 'pointer',
     transition: 'all 0.2s ease',
   },
@@ -296,15 +381,16 @@ const styles = {
     backgroundColor: '#ffffff',
     borderRadius: '20px',
     padding: '2rem',
-    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)',
+    boxShadow: '0 10px 30px -5px rgba(15,23,42,0.06)',
     border: '1px solid #f1f5f9',
-    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
   },
   cardHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: '1.5rem',
+    marginBottom: '1.25rem',
+    flexWrap: 'wrap',
+    gap: '1rem',
   },
   companyInfo: {
     display: 'flex',
@@ -353,71 +439,47 @@ const styles = {
   jobDetails: {
     display: 'flex',
     gap: '1.5rem',
-    paddingBottom: '1.5rem',
+    paddingBottom: '1.25rem',
     borderBottom: '1px solid #f1f5f9',
     marginBottom: '1.5rem',
+    flexWrap: 'wrap',
   },
   detailItem: {
     display: 'flex',
     alignItems: 'center',
     gap: '0.5rem',
-    fontSize: '0.875rem',
+    fontSize: '0.8125rem',
     color: '#64748b',
-    fontWeight: 500,
+    fontWeight: 600,
   },
   detailIcon: {
     color: '#94a3b8',
   },
-  timelineContainer: {
+  timelineWrapper: {
+    padding: '1rem 0 0.5rem 0',
+  },
+  timelineStepsRow: {
     display: 'flex',
-    alignItems: 'center',
+    justifyContent: 'space-between',
     width: '100%',
-    padding: '0.5rem 0',
-  },
-  timelineDot: {
-    width: '16px',
-    height: '16px',
-    borderRadius: '50%',
-    border: '2px solid',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  dotInner: {
-    width: '6px',
-    height: '6px',
-    backgroundColor: '#fff',
-    borderRadius: '50%',
-  },
-  timelineText: {
-    fontSize: '0.75rem',
-    marginLeft: '0.5rem',
-    marginRight: '0.5rem',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-  timelineLine: {
-    flex: 1,
-    height: '2px',
-    minWidth: '20px',
-    margin: '0 0.5rem',
+    position: 'relative'
   },
   rejectedBanner: {
     backgroundColor: '#fef2f2',
     color: '#ef4444',
     padding: '1rem',
-    borderRadius: '8px',
+    borderRadius: '12px',
     fontSize: '0.875rem',
-    fontWeight: 500,
+    fontWeight: 600,
     textAlign: 'center',
+    border: '1px solid #fee2e2'
   },
   emptyState: {
     textAlign: 'center',
     padding: '4rem 2rem',
     backgroundColor: '#ffffff',
     borderRadius: '20px',
-    border: '1px dashed #cbd5e1',
+    border: '1.5px dashed #cbd5e1',
   },
   emptyIcon: {
     fontSize: '4rem',
@@ -437,9 +499,9 @@ const styles = {
     display: 'inline-flex',
     alignItems: 'center',
     padding: '0.75rem 1.5rem',
-    backgroundColor: '#4f46e5',
+    backgroundColor: '#6366f1',
     color: '#ffffff',
-    fontWeight: 600,
+    fontWeight: 700,
     borderRadius: '12px',
     border: 'none',
     cursor: 'pointer',
@@ -447,9 +509,9 @@ const styles = {
   },
   loader: {
     textAlign: 'center',
-    padding: '3rem',
+    padding: '4rem',
     color: '#64748b',
-    fontWeight: 500,
+    fontWeight: 600,
   }
 };
 

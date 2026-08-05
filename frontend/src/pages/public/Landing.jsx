@@ -104,42 +104,6 @@ export default function Landing() {
                 <img src="/hero.jpg" alt="Student working" style={{ width: '100%', display: 'block' }} />
               </div>
 
-              {/* Floating card */}
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                style={{
-                  position: 'absolute', bottom: -20, left: -20,
-                  background: 'white', borderRadius: 16, padding: '0.875rem 1.125rem',
-                  boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
-                  border: '1px solid var(--border)',
-                  display: 'flex', alignItems: 'center', gap: '0.625rem',
-                }}
-              >
-                <div style={{ fontSize: '1.5rem' }}>🎯</div>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--text-primary)' }}>92% Match Found</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Microsoft Internship</div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-                style={{
-                  position: 'absolute', top: 20, right: -20,
-                  background: 'white', borderRadius: 16, padding: '0.875rem 1.125rem',
-                  boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
-                  border: '1px solid var(--border)',
-                  display: 'flex', alignItems: 'center', gap: '0.625rem',
-                }}
-              >
-                <div style={{ fontSize: '1.5rem' }}>✅</div>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--text-primary)' }}>Shortlisted!</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Google AI Engineer</div>
-                </div>
-              </motion.div>
             </motion.div>
           </div>
         </div>
