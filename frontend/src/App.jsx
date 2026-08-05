@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/auth/Login';
 import Navbar from './components/common/Navbar';
 import Register from './pages/auth/Register';
+import Intro from './pages/public/Intro';
 import Landing from './pages/public/Landing';
 import Jobs from './pages/student/Jobs';
 import Applications from './pages/student/Applications';
@@ -19,7 +20,8 @@ function App() {
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={<Intro />} />
+        <Route path="/home" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/jobs" element={<Jobs />} />

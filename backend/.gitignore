@@ -1,10 +1,10 @@
-# Python
+# Python & Cache
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 
-# Environments
+# Environments & Secrets
 .env
 .venv
 env/
@@ -13,29 +13,24 @@ ENV/
 env.bak/
 venv.bak/
 
-# Database
+# Databases
+*.db
 *.sqlite3
+sql_app.db
 careerverse.db
 
 # User Uploads
-uploads/
+uploads/*
+!uploads/.gitkeep
 
-# OS specific
+# Development Guides & Scratch Files
+implementation_plan.md
+deployment_guide.md
+walkthrough.md
+task.md
+plan.md
+*.log
+
+# OS Specific
 .DS_Store
 Thumbs.db
-
-# Database
-backend/sql_app.db
-*.db
-*.sqlite3
-
-# Python virtual environments
-backend/.venv/
-backend/venv/
-
-# Python cache
-__pycache__/
-*.pyc
-
-# Environment variables
-.env

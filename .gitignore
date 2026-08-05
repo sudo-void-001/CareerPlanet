@@ -1,0 +1,54 @@
+# Development Helper Files & Guides
+implementation_plan.md
+deployment_guide.md
+walkthrough.md
+task.md
+plan.md
+BACKEND_BLUEPRINT-1.md
+FRONTEND_BLUEPRINT-1.md
+INTEGRATION_BLUEPRINT.md
+PROJECT_STRUCTURE.md
+SCOPE_OPTIMIZATION_GUIDE.md
+
+# Scratch & Brain Directories
+scratch/
+.system_generated/
+*.log
+
+# Environment & Secret Files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Node / Frontend Dependencies & Builds
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+.eslintcache
+
+# Python / Backend Virtual Envs & Databases
+backend/venv/
+backend/__pycache__/
+backend/app/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+backend/sql_app.db
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# IDE & OS System Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo

@@ -7,7 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Node
+# Node & Build Outputs
 node_modules
 dist
 dist-ssr
@@ -19,6 +19,13 @@ dist-ssr
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Development Guides & Scratch Files
+implementation_plan.md
+deployment_guide.md
+walkthrough.md
+task.md
+plan.md
 
 # Editor directories and files
 .vscode/*

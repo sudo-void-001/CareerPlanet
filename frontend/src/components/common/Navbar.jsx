@@ -97,6 +97,7 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const isAuthPage = ['/login', '/register'].includes(location.pathname);
+  const isIntroPage = location.pathname === '/';
 
   const token = localStorage.getItem('token');
   const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
@@ -108,7 +109,7 @@ export default function Navbar() {
     navigate('/login');
   };
 
-  if (isAuthPage) return null;
+  if (isAuthPage || isIntroPage) return null;
 
   const studentLinks = [
     { to: '/jobs', label: 'Find Jobs' },
@@ -141,7 +142,7 @@ export default function Navbar() {
     >
       <div className="container" style={{ display: 'flex', alignItems: 'center', height: '4.25rem', justifyContent: 'space-between' }}>
         {/* Logo */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', textDecoration: 'none' }}>
+        <Link to="/home" style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', textDecoration: 'none' }}>
           <div style={{
             width: 36, height: 36, borderRadius: 10,
             background: 'var(--gradient)',
