@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import api from '../../api/axios';
 
 const ACTIONS = [
@@ -21,6 +22,7 @@ function parseMarkdown(text) {
 }
 
 export default function AIAssistant() {
+  const location = useLocation();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
     { sender: 'ai', text: 'Hello! I am your AI career assistant. How can I help you today?' }
@@ -29,13 +31,33 @@ export default function AIAssistant() {
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null);
 
-  const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
+  const getLocalUser = () => {
+    try {
+      return JSON.parse(localStorage.getItem('user'));
+    } catch {
+      return null;
+    }
+  };
+
+  const [user, setUser] = useState(getLocalUser());
+  
+  useEffect(() => {
+    setUser(getLocalUser());
+  }, [location]);
+
+  useEffect(() => {
+    const handleStorage = () => {
+      setUser(getLocalUser());
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
   
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  if (user?.role === 'recruiter' || user?.role === 'admin') return null;
+  if (!user || user?.role === 'admin') return null;
 
   const sendMessage = async (text) => {
     if (!text.trim() || loading) return;
