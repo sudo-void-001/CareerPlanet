@@ -1,22 +1,33 @@
 """
 CareerPlanet Email Service
 Sends beautiful HTML emails for application lifecycle events.
-Uses SMTP if configured in env, otherwise logs to console (no-op mode for testing).
+Supports SMTP (e.g. Brevo) if credentials are provided in env, falls back to Resend or console logging.
 """
 import os
-import resend
+import smtplib
 import logging
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import resend
 from dotenv import load_dotenv
 
 load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
-FROM_EMAIL = os.getenv("FROM_EMAIL", "CareerPlanet <onboarding@resend.dev>") # Using resend sandbox by default
-EMAIL_ENABLED = bool(RESEND_API_KEY)
+# SMTP Config
+SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp-relay.brevo.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+SMTP_USER = os.getenv("SMTP_USER", "")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+SMTP_ENABLED = bool(SMTP_USER and SMTP_PASSWORD)
 
-if EMAIL_ENABLED:
+# Resend Config
+RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
+FROM_EMAIL = os.getenv("FROM_EMAIL", "CareerPlanet <onboarding@resend.dev>")
+RESEND_ENABLED = bool(RESEND_API_KEY) and not SMTP_ENABLED
+
+if RESEND_ENABLED:
     resend.api_key = RESEND_API_KEY
 
 BRAND_COLOR = "#6366f1"
@@ -68,24 +79,45 @@ def _base_template(content: str, footer_note: str = "") -> str:
 """
 
 def _send(to_email: str, subject: str, html: str) -> bool:
-    """Send email via Resend API. Falls back to console log if not configured."""
-    if not EMAIL_ENABLED:
+    """Send email via SMTP if enabled, fallback to Resend API, fallback to console log."""
+    if SMTP_ENABLED:
+        try:
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = subject
+            msg['From'] = FROM_EMAIL
+            msg['To'] = to_email
+            msg.attach(MIMEText(html, 'html'))
+
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.sendmail(SMTP_USER, to_email, msg.as_string())
+            server.quit()
+            
+            logger.info(f"Email sent successfully via SMTP ({SMTP_SERVER}) to {to_email}")
+            return True
+        except Exception as e:
+            logger.error(f"SMTP Email failed to {to_email}: {e}")
+            return False
+
+    elif RESEND_ENABLED:
+        try:
+            r = resend.Emails.send({
+                "from": FROM_EMAIL,
+                "to": to_email,
+                "subject": subject,
+                "html": html
+            })
+            logger.info(f"Email sent successfully via Resend to {to_email}: {r}")
+            return True
+        except Exception as e:
+            logger.error(f"Resend Email failed to {to_email}: {e}")
+            return False
+
+    else:
         logger.info(f"[EMAIL - NO-OP] To: {to_email} | Subject: {subject}")
         logger.info(f"[EMAIL BODY PREVIEW]: {html[:200]}...")
-        return True  # Return True so tracking still updates
-
-    try:
-        r = resend.Emails.send({
-            "from": FROM_EMAIL,
-            "to": to_email,
-            "subject": subject,
-            "html": html
-        })
-        logger.info(f"Email sent successfully to {to_email}: {r}")
         return True
-    except Exception as e:
-        logger.error(f"Email failed to {to_email}: {e}")
-        return False
 
 
 def send_application_email(
