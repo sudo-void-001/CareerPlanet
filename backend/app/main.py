@@ -16,13 +16,15 @@ app = FastAPI(title="Career Planet API", version="1.0.0", docs_url="/docs")
 origins_env = os.getenv("ALLOWED_ORIGINS", "*")
 if origins_env.strip() == "*":
     ALLOWED_ORIGINS = ["*"]
+    allow_creds = False
 else:
     ALLOWED_ORIGINS = [o.strip() for o in origins_env.split(",") if o.strip()]
+    allow_creds = True
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=True,
+    allow_credentials=allow_creds,
     allow_methods=["*"],
     allow_headers=["*"],
 )
