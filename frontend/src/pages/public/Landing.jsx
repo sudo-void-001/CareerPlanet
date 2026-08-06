@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const companies = [
-  { name: 'Microsoft', color: '#00a4ef', letter: 'M' },
-  { name: 'Google', color: '#34a853', letter: 'G' },
-  { name: 'Amazon', color: '#ff9900', letter: 'A' },
-  { name: 'Adobe', color: '#ff0000', letter: 'Ad' },
-  { name: 'Infosys', color: '#007cc5', letter: 'I' },
-  { name: 'TCS', color: '#2c2c8e', letter: 'T' },
-  { name: 'Deloitte', color: '#86bc25', letter: 'D' },
-  { name: 'Airtel', color: '#e40000', letter: 'Ai' },
+  { name: 'Microsoft', color: '#000000', letter: 'M' },
+  { name: 'Google', color: '#1a1a1a', letter: 'G' },
+  { name: 'Amazon', color: '#0a0a0a', letter: 'A' },
+  { name: 'Adobe', color: '#171717', letter: 'Ad' },
+  { name: 'Infosys', color: '#0f0f0f', letter: 'I' },
+  { name: 'TCS', color: '#121212', letter: 'T' },
+  { name: 'Deloitte', color: '#141414', letter: 'D' },
+  { name: 'Airtel', color: '#000000', letter: 'Ai' },
 ];
 
 const stats = [
@@ -60,25 +60,28 @@ const features = [
 ];
 
 const slowFadeUp = {
-  hidden: { opacity: 0, y: 35 },
-  show: { opacity: 1, y: 0, transition: { duration: 1.4, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0, y: 40 },
+  show: { opacity: 1, y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } },
 };
 
 const slowStagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.25 } },
+  show: { transition: { staggerChildren: 0.2 } },
 };
 
 export default function Landing() {
   const isLoggedIn = !!localStorage.getItem('token');
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const { scrollYProgress } = useScroll();
+  const yHeroText = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const scalePlanet = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
 
   const handleMouseMove = (e) => {
     const { clientX, clientY } = e;
     const { innerWidth, innerHeight } = window;
     setMousePos({
-      x: (clientX / innerWidth - 0.5) * 15,
-      y: (clientY / innerHeight - 0.5) * 15,
+      x: (clientX / innerWidth - 0.5) * 20,
+      y: (clientY / innerHeight - 0.5) * 20,
     });
   };
 
@@ -88,394 +91,261 @@ export default function Landing() {
       style={{ background: 'var(--bg)', minHeight: '100vh', color: 'var(--text-primary)', overflowX: 'hidden' }}
     >
       
-      {/* ── CINEMATIC HERO SECTION WITH DYNAMIC THEME ENGINE ────────────── */}
+      {/* ── CINEMATIC HERO SECTION ────────────── */}
       <section style={{ 
-        paddingTop: '7rem', 
-        paddingBottom: '9rem', 
         position: 'relative', 
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         overflow: 'hidden',
-        background: 'radial-gradient(ellipse at 50% 25%, var(--surface) 0%, var(--bg) 65%, #030408 100%)' 
+        background: 'var(--bg)' 
       }}>
         
-        {/* Dynamic Theme Glow Halos (Uses var(--primary-light) & var(--border-glow)) */}
+        {/* Cinematic Imagery (Left: Recruiter, Right: Student) Blended with Gradients */}
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', justifyContent: 'space-between', zIndex: 0, pointerEvents: 'none', opacity: 0.6 }}>
+          {/* Left Recruiter Image */}
+          <div style={{
+            width: '50vw',
+            height: '100%',
+            backgroundImage: 'url(/cinematic-recruiter.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center right',
+            maskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%), linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.1) 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%), linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.1) 100%)',
+          }} />
+          
+          {/* Right Student Image */}
+          <div style={{
+            width: '50vw',
+            height: '100%',
+            backgroundImage: 'url(/cinematic-student.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center left',
+            maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%), linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.1) 100%)',
+            WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%), linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.1) 100%)',
+          }} />
+        </div>
+
+        {/* Central Shadow/Fade Mask to ensure text readability */}
         <div style={{
           position: 'absolute',
-          top: '10%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '850px',
-          height: '500px',
-          background: 'radial-gradient(ellipse, var(--primary-light) 0%, rgba(139, 92, 246, 0.1) 45%, transparent 75%)',
-          filter: 'blur(90px)',
-          pointerEvents: 'none',
-          transition: 'background 0.5s ease'
+          inset: 0,
+          background: 'radial-gradient(circle at center, rgba(0,0,0,0.3) 0%, var(--bg) 70%)',
+          zIndex: 1,
+          pointerEvents: 'none'
         }} />
-        
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '5%',
-          width: '450px',
-          height: '450px',
-          background: 'radial-gradient(circle, var(--primary-light) 0%, transparent 70%)',
-          filter: 'blur(80px)',
-          pointerEvents: 'none',
-          transition: 'background 0.5s ease'
-        }} />
-        
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          right: '5%',
-          width: '450px',
-          height: '450px',
-          background: 'radial-gradient(circle, var(--primary-light) 0%, transparent 70%)',
-          filter: 'blur(80px)',
-          pointerEvents: 'none',
-          transition: 'background 0.5s ease'
-        }} />
+
+        {/* Ambient Lighting & Particles */}
+        <div className="ambient-glow" style={{ zIndex: 2 }} />
 
         {/* Subtle Star Particle Grid */}
         <div style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-          opacity: 0.35,
+          backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px)',
+          backgroundSize: '64px 64px',
+          opacity: 0.2,
           pointerEvents: 'none',
-          zIndex: 0
+          zIndex: 2
         }} />
 
-        <div className="container" style={{ position: 'relative', zIndex: 10, maxWidth: '1280px' }}>
-          
-          {/* Top Pill Announcement */}
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }} style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <span className="badge badge-green" style={{
-              padding: '0.5rem 1.35rem',
-              fontSize: '0.875rem',
-              fontWeight: 700,
-              borderRadius: 'var(--radius-full)',
-              backdropFilter: 'blur(16px)',
-              boxShadow: 'var(--shadow-glow)',
-              transition: 'all 0.3s ease'
-            }}>
-              <span style={{ fontSize: '0.75rem' }}>✦</span> AI Placement & Recruiter Ecosystem
-            </span>
-          </motion.div>
+        {/* Massive Planet (Centered Background) */}
+        <motion.div 
+          style={{ 
+            position: 'absolute', 
+            top: '50%', 
+            left: '50%', 
+            x: '-50%', 
+            y: '-50%',
+            scale: scalePlanet,
+            zIndex: 3,
+            pointerEvents: 'none',
+            transform: `translate3d(${mousePos.x * 0.5}px, ${mousePos.y * 0.5}px, 0)`
+          }}
+        >
+          <div style={{ position: 'relative', width: 600, height: 600, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {/* Planet Glow */}
+            <div style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.02) 50%, transparent 70%)',
+              filter: 'blur(40px)',
+              animation: 'pulse-glow 4s ease-in-out infinite'
+            }} />
 
-          {/* 3-Column Storytelling Grid: Recruiter (Left) — Dynamic Theme Planet (Center) — Student (Right) */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1.05fr 1.4fr 1.05fr', gap: '3.5rem', alignItems: 'center' }}>
-            
-            {/* ── LEFT SIDE: RECRUITER ─────────────────── */}
-            <motion.div 
-              initial={{ opacity: 0, x: -60 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1.4, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              style={{ transform: `translate3d(${mousePos.x * -0.4}px, ${mousePos.y * -0.4}px, 0)` }}
-            >
-              <div style={{
-                background: 'rgba(20, 23, 36, 0.85)',
-                borderRadius: 24,
-                padding: '2rem',
-                border: '1px solid var(--border-glow)',
-                boxShadow: '0 25px 60px rgba(0,0,0,0.7), var(--shadow-glow)',
-                backdropFilter: 'blur(20px)',
+            {/* Main Sphere */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
+              style={{
+                width: 380,
+                height: 380,
+                borderRadius: '50%',
+                background: 'radial-gradient(circle at 35% 35%, #333333 0%, #000000 70%)',
+                boxShadow: 'inset 25px 25px 50px rgba(255,255,255,0.2), inset -30px -30px 60px rgba(0,0,0,1), 0 0 60px rgba(255,255,255,0.1)',
                 position: 'relative',
-                transition: 'all 0.4s ease'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                  <span className="badge badge-blue" style={{ fontSize: '0.75rem', padding: '0.35rem 0.85rem' }}>🏢 Hiring Recruiter</span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 700 }}>Hiring Active</span>
-                </div>
-
-                <div style={{ display: 'flex', gap: '1.15rem', alignItems: 'center', marginBottom: '1.5rem' }}>
-                  <img 
-                    src="/recruiter.jpg" 
-                    alt="Corporate Recruiter" 
-                    style={{ 
-                      width: 64, 
-                      height: 64, 
-                      borderRadius: 16, 
-                      objectFit: 'cover', 
-                      border: '2px solid var(--primary)',
-                      boxShadow: 'var(--shadow-glow)',
-                      transition: 'border-color 0.3s ease'
-                    }} 
-                  />
-                  <div>
-                    <h4 style={{ color: 'var(--text-primary)', fontSize: '1.15rem', margin: 0, fontWeight: 800 }}>Sarah Jenkins</h4>
-                    <p style={{ color: 'var(--text-tertiary)', fontSize: '0.84375rem', margin: '0.2rem 0 0 0' }}>Senior Talent Partner • Microsoft</p>
-                  </div>
-                </div>
-
-                <div style={{ background: 'rgba(255, 255, 255, 0.03)', borderRadius: 16, padding: '1.15rem', border: '1px solid var(--border)', marginBottom: '1.25rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84375rem', marginBottom: '0.5rem' }}>
-                    <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Active Role Openings</span>
-                    <span style={{ color: 'var(--primary)', fontWeight: 800 }}>18 Positions</span>
-                  </div>
-                  <div style={{ fontSize: '0.8125rem', color: 'var(--success)', fontWeight: 700 }}>
-                    ✉️ Custom Pitch Delivery Ready
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                  <span className="skill-chip">SDE Intern</span>
-                  <span className="skill-chip">AI Research</span>
-                  <span className="skill-chip">$50/hr</span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* ── CENTER: THEME-ADAPTIVE 3D PLANET & TYPOGRAPHY ── */}
-            <motion.div initial="hidden" animate="show" variants={slowStagger} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-              
-              {/* Detailed 3D Planet Asset (Adapts to Active Theme Variable) */}
-              <div style={{ position: 'relative', width: 340, height: 340, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2.5rem', transform: `translate3d(${mousePos.x * 0.3}px, ${mousePos.y * 0.3}px, 0)` }}>
-                
-                {/* Atmospheric Aura Halo */}
-                <div style={{
-                  position: 'absolute',
-                  width: 360,
-                  height: 360,
-                  borderRadius: '50%',
-                  background: 'radial-gradient(circle, var(--primary-light) 0%, var(--border-glow) 50%, transparent 80%)',
-                  filter: 'blur(35px)',
-                  pointerEvents: 'none',
-                  transition: 'background 0.5s ease'
-                }} />
-
-                {/* 3D Planet Sphere (Gradients dynamically adapt to var(--primary) & var(--secondary)) */}
-                <motion.div
-                  animate={{ 
-                    y: [0, -10, 0],
-                    rotate: [0, 4, 0, -4, 0]
-                  }}
-                  transition={{ 
-                    duration: 7, 
-                    repeat: Infinity, 
-                    ease: 'easeInOut' 
-                  }}
-                  style={{
-                    width: 210,
-                    height: 210,
-                    borderRadius: '50%',
-                    background: `
-                      radial-gradient(circle at 30% 30%, rgba(255,255,255,0.85) 0%, transparent 25%),
-                      radial-gradient(circle at 75% 75%, rgba(5, 10, 25, 0.95) 0%, transparent 60%),
-                      var(--gradient)
-                    `,
-                    boxShadow: '0 0 80px var(--border-glow), inset -22px -22px 60px rgba(0,0,0,0.9), inset 15px 15px 35px rgba(255,255,255,0.5)',
-                    position: 'relative',
-                    zIndex: 2,
-                    overflow: 'hidden',
-                    transition: 'box-shadow 0.5s ease, background 0.5s ease'
-                  }}
-                >
-                  <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    backgroundImage: 'radial-gradient(ellipse at 40% 50%, rgba(255,255,255,0.3) 0%, transparent 60%), radial-gradient(circle at 70% 30%, var(--primary-light) 0%, transparent 50%)',
-                    filter: 'contrast(120%)',
-                    borderRadius: '50%'
-                  }} />
-                </motion.div>
-
-                {/* Orbital Ring 1 (Uses var(--primary)) */}
-                <motion.div
-                  animate={{ rotateZ: 360 }}
-                  transition={{ duration: 32, repeat: Infinity, ease: 'linear' }}
-                  style={{
-                    position: 'absolute',
-                    width: 350,
-                    height: 350,
-                    borderRadius: '50%',
-                    border: '14px solid var(--primary)',
-                    borderTopColor: '#ffffff',
-                    borderBottomColor: 'var(--secondary)',
-                    boxShadow: 'var(--shadow-glow), inset 0 0 30px var(--border-glow)',
-                    transform: 'rotateX(72deg) rotateZ(-25deg)',
-                    zIndex: 3,
-                    pointerEvents: 'none',
-                    transition: 'border-color 0.5s ease, box-shadow 0.5s ease'
-                  }}
-                />
-
-                {/* Orbital Ring 2 (Dashed Counter-Rotation) */}
-                <motion.div
-                  animate={{ rotateZ: -360 }}
-                  transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
-                  style={{
-                    position: 'absolute',
-                    width: 380,
-                    height: 380,
-                    borderRadius: '50%',
-                    border: '2px dashed var(--primary)',
-                    transform: 'rotateX(65deg) rotateZ(35deg)',
-                    zIndex: 1,
-                    pointerEvents: 'none',
-                    transition: 'border-color 0.5s ease'
-                  }}
-                />
-
-                {/* Orbiting Satellite Dot */}
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
-                  style={{
-                    position: 'absolute',
-                    width: 340,
-                    height: 340,
-                    borderRadius: '50%',
-                    zIndex: 4,
-                    pointerEvents: 'none'
-                  }}
-                >
-                  <div style={{
-                    width: 14,
-                    height: 14,
-                    borderRadius: '50%',
-                    background: 'var(--primary)',
-                    boxShadow: 'var(--shadow-glow)',
-                    position: 'absolute',
-                    top: 0,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    transition: 'background 0.5s ease'
-                  }} />
-                </motion.div>
-
-              </div>
-
-              {/* Main Headline (Theme Gradient Text) */}
-              <motion.h1 variants={slowFadeUp} style={{ fontSize: 'clamp(2.75rem, 5vw, 4.25rem)', fontWeight: 900, marginBottom: '1.5rem', lineHeight: 1.1, letterSpacing: '-0.035em', color: '#ffffff' }}>
-                Connecting Talent with <br />
-                <span className="gradient-text">
-                  Opportunity.
-                </span>
-              </motion.h1>
-
-              {/* Subheadline */}
-              <motion.p variants={slowFadeUp} style={{ fontSize: '1.15rem', color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: '2.5rem', maxWidth: 580 }}>
-                CareerPlanet is the next-generation AI ecosystem bridging top-tier Students and elite Recruiters with instant ATS scoring, custom pitches, and real-time status tracking.
-              </motion.p>
-
-              {/* Action Buttons */}
-              <motion.div variants={slowFadeUp} style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                {isLoggedIn ? (
-                  <Link to="/jobs" className="btn btn-primary btn-lg" style={{ borderRadius: 'var(--radius-full)', padding: '1rem 2.5rem', fontSize: '1.05rem', fontWeight: 800 }}>
-                    Browse Opportunities →
-                  </Link>
-                ) : (
-                  <>
-                    <Link to="/register" className="btn btn-primary btn-lg" style={{ borderRadius: 'var(--radius-full)', padding: '1rem 2.5rem', fontSize: '1.05rem', fontWeight: 800 }}>
-                      Get Started Free
-                    </Link>
-                    <Link to="/login" className="btn btn-secondary btn-lg" style={{ borderRadius: 'var(--radius-full)', padding: '1rem 2.5rem', fontSize: '1.05rem', fontWeight: 800 }}>
-                      Sign In to Account
-                    </Link>
-                  </>
-                )}
-              </motion.div>
-
-            </motion.div>
-
-            {/* ── RIGHT SIDE: STUDENT ─────────────────── */}
-            <motion.div 
-              initial={{ opacity: 0, x: 60 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1.4, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              style={{ transform: `translate3d(${mousePos.x * 0.4}px, ${mousePos.y * 0.4}px, 0)` }}
+                overflow: 'hidden'
+              }}
             >
+              {/* Craters/Texture */}
               <div style={{
-                background: 'rgba(20, 23, 36, 0.85)',
-                borderRadius: 24,
-                padding: '2rem',
-                border: '1px solid var(--border-glow)',
-                boxShadow: '0 25px 60px rgba(0,0,0,0.7), var(--shadow-glow)',
-                backdropFilter: 'blur(20px)',
-                position: 'relative',
-                transition: 'all 0.4s ease'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                  <span className="badge badge-green" style={{ fontSize: '0.75rem', padding: '0.35rem 0.85rem' }}>🎓 Verified Student</span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 700 }}>Ready to Join</span>
-                </div>
-
-                <div style={{ display: 'flex', gap: '1.15rem', alignItems: 'center', marginBottom: '1.5rem' }}>
-                  <img 
-                    src="/student.jpg" 
-                    alt="Student Candidate" 
-                    style={{ 
-                      width: 64, 
-                      height: 64, 
-                      borderRadius: 16, 
-                      objectFit: 'cover', 
-                      border: '2px solid var(--primary)',
-                      boxShadow: 'var(--shadow-glow)',
-                      transition: 'border-color 0.3s ease'
-                    }} 
-                  />
-                  <div>
-                    <h4 style={{ color: 'var(--text-primary)', fontSize: '1.15rem', margin: 0, fontWeight: 800 }}>Arjun Sharma</h4>
-                    <p style={{ color: 'var(--text-tertiary)', fontSize: '0.84375rem', margin: '0.2rem 0 0 0' }}>Computer Science • Tier-1 Institute</p>
-                  </div>
-                </div>
-
-                <div style={{ background: 'rgba(255, 255, 255, 0.03)', borderRadius: 16, padding: '1.15rem', border: '1px solid var(--border)', marginBottom: '1.25rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84375rem', marginBottom: '0.5rem' }}>
-                    <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>AI ATS Score</span>
-                    <span style={{ color: 'var(--success)', fontWeight: 800 }}>98% Verified</span>
-                  </div>
-                  <div style={{ height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '99px', overflow: 'hidden' }}>
-                    <div style={{ width: '98%', height: '100%', background: 'var(--gradient)', borderRadius: '99px' }} />
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                  <span className="skill-chip">React.js</span>
-                  <span className="skill-chip">FastAPI</span>
-                  <span className="skill-chip">PyTorch</span>
-                </div>
-              </div>
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.1%22/%3E%3C/svg%3E")',
+                mixBlendMode: 'overlay',
+                opacity: 0.5
+              }} />
             </motion.div>
 
+            {/* Orbital Rings */}
+            <motion.div
+              animate={{ rotateX: 360 }}
+              transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+              style={{
+                position: 'absolute',
+                width: 650,
+                height: 650,
+                borderRadius: '50%',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderTop: '2px solid rgba(255,255,255,0.4)',
+                transform: 'rotateX(75deg) rotateZ(-15deg)',
+                pointerEvents: 'none'
+              }}
+            />
+            <motion.div
+              animate={{ rotateZ: -360 }}
+              transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+              style={{
+                position: 'absolute',
+                width: 700,
+                height: 700,
+                borderRadius: '50%',
+                border: '1px dashed rgba(255,255,255,0.15)',
+                transform: 'rotateX(70deg) rotateY(20deg)',
+                pointerEvents: 'none'
+              }}
+            />
           </div>
+        </motion.div>
 
-          {/* Bottom Integrated Stats Bar */}
-          <motion.div initial={{ opacity: 0, y: 35 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.4, delay: 0.8, ease: [0.16, 1, 0.3, 1] }} style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', padding: '2rem 2.5rem', background: 'rgba(20, 23, 36, 0.65)', borderRadius: 24, border: '1px solid var(--border)', backdropFilter: 'blur(16px)', marginTop: '5.5rem', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }}>
+        <div className="container" style={{ position: 'relative', zIndex: 10, maxWidth: '1200px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingTop: '4rem' }}>
+          
+          {/* Main Hero Layout: Center focused with massive planet */}
+          <motion.div initial="hidden" animate="show" variants={slowStagger} style={{ y: yHeroText, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            
+            {/* Top Badge */}
+            <motion.div variants={slowFadeUp} style={{ marginBottom: '2rem' }}>
+              <span className="badge" style={{
+                padding: '0.5rem 1.5rem',
+                fontSize: '0.8125rem',
+                borderRadius: 'var(--radius-full)',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(20px)',
+                boxShadow: 'var(--shadow-glow)',
+                color: '#ffffff'
+              }}>
+                ✦ AI-Powered Placement Ecosystem
+              </span>
+            </motion.div>
+            
+            {/* Redesigned header spacer */}
+
+            {/* Typography */}
+            <motion.h1 variants={slowFadeUp} style={{ 
+              fontSize: 'clamp(3.5rem, 7vw, 6.5rem)', 
+              fontWeight: 800, 
+              lineHeight: 1, 
+              letterSpacing: '-0.04em', 
+              color: '#ffffff',
+              textShadow: '0 10px 40px rgba(0,0,0,0.8)',
+              marginTop: '1.5rem',
+              marginBottom: '1.5rem'
+            }}>
+              Where Talent <br />
+              <span style={{ color: 'var(--text-secondary)' }}>Meets Opportunity.</span>
+            </motion.h1>
+
+            <motion.p variants={slowFadeUp} style={{ 
+              fontSize: '1.25rem', 
+              color: 'var(--text-secondary)', 
+              lineHeight: 1.6, 
+              marginBottom: '3rem', 
+              maxWidth: 640,
+              textShadow: '0 4px 20px rgba(0,0,0,0.8)'
+            }}>
+              CareerPlanet is the premier ecosystem bridging elite students and top-tier recruiters with real-time AI matching, ATS scoring, and seamless tracking.
+            </motion.p>
+
+            {/* Action Buttons */}
+            <motion.div variants={slowFadeUp} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', position: 'relative', zIndex: 20 }}>
+              {isLoggedIn ? (
+                <Link to="/jobs" className="btn btn-primary btn-lg" style={{ padding: '1rem 2.5rem' }}>
+                  Browse Opportunities
+                </Link>
+              ) : (
+                <>
+                  <Link to="/register" className="btn btn-primary btn-lg" style={{ padding: '1rem 2.5rem' }}>
+                    Get Started Free
+                  </Link>
+                  <Link to="/login" className="btn btn-secondary btn-lg" style={{ padding: '1rem 2.5rem', background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)' }}>
+                    Sign In
+                  </Link>
+                </>
+              )}
+            </motion.div>
+
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── STATS SECTION (Glassmorphism overlap) ────────────── */}
+      <section style={{ position: 'relative', zIndex: 20, marginTop: '0rem', padding: '0 1rem' }}>
+        <div className="container">
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} 
+            style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+              gap: '1px', 
+              background: 'var(--border)', 
+              borderRadius: 'var(--radius-xl)', 
+              overflow: 'hidden',
+              boxShadow: 'var(--shadow-xl)'
+            }}
+          >
             {stats.map(s => (
-              <div key={s.label} style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '1.85rem', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>{s.value}</div>
-                <div style={{ fontSize: '0.84375rem', color: 'var(--text-tertiary)', marginTop: '0.35rem', fontWeight: 600 }}>{s.label}</div>
+              <div key={s.label} style={{ background: 'var(--surface)', padding: '3rem 2rem', textAlign: 'center', backdropFilter: 'blur(20px)' }}>
+                <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '0.5rem' }}>{s.value}</div>
+                <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.label}</div>
               </div>
             ))}
           </motion.div>
-
         </div>
       </section>
 
       {/* ── TOP COMPANIES ────────────────────────────── */}
-      <section style={{ padding: '4.5rem 1rem', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', background: 'var(--bg-subtle)' }}>
+      <section style={{ padding: '8rem 1rem 6rem' }}>
         <div className="container">
-          <p style={{ textAlign: 'center', fontSize: '0.84375rem', color: 'var(--text-tertiary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '2.5rem' }}>
-            Trusted by top global tech companies & recruiters
+          <p style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '3rem' }}>
+            Trusted by hiring teams at
           </p>
           <motion.div
             initial="hidden" whileInView="show" viewport={{ once: true }} variants={slowStagger}
-            style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1.5rem' }}
+            style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '2.5rem', opacity: 0.7 }}
           >
             {companies.map(c => (
-              <motion.div key={c.name} variants={slowFadeUp}>
-                <div className="glass-card" style={{
-                  display: 'flex', alignItems: 'center', gap: '0.85rem',
-                  padding: '0.75rem 1.5rem', borderRadius: 'var(--radius-full)',
-                  cursor: 'default',
-                }}>
-                  <div style={{ width: 28, height: 28, borderRadius: 8, background: c.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '0.8125rem' }}>
-                    {c.letter}
-                  </div>
-                  <span style={{ fontWeight: 700, fontSize: '0.9375rem', color: '#f8fafc' }}>{c.name}</span>
+              <motion.div key={c.name} variants={slowFadeUp} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', filter: 'grayscale(100%)' }}>
+                <div style={{ width: 32, height: 32, borderRadius: '8px', background: 'var(--surface-3)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem' }}>
+                  {c.letter}
                 </div>
+                <span style={{ fontWeight: 600, fontSize: '1.25rem', color: 'var(--text-secondary)', letterSpacing: '-0.02em' }}>{c.name}</span>
               </motion.div>
             ))}
           </motion.div>
@@ -483,24 +353,18 @@ export default function Landing() {
       </section>
 
       {/* ── BENTO GRID AI FEATURES ──────────────────── */}
-      <section style={{ padding: '8rem 1rem' }}>
+      <section style={{ padding: '6rem 1rem' }}>
         <div className="container">
-          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={slowStagger} style={{ textAlign: 'center', marginBottom: '5rem' }}>
-            <motion.span variants={slowFadeUp} className="badge badge-green" style={{ marginBottom: '1.25rem', display: 'inline-flex', padding: '0.45rem 1.25rem' }}>
-              ✦ Platform Capabilities
-            </motion.span>
-            <motion.h2 variants={slowFadeUp} style={{ marginBottom: '1.25rem', fontSize: 'clamp(2.25rem, 4vw, 3.25rem)', fontWeight: 800 }}>
-              Everything you need to <span className="gradient-text">accelerate your career</span>
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={slowStagger} style={{ textAlign: 'center', marginBottom: '6rem' }}>
+            <motion.h2 variants={slowFadeUp} style={{ marginBottom: '1.5rem', fontSize: 'clamp(2.5rem, 4vw, 3.5rem)' }}>
+              Everything you need to <br /><span style={{ color: 'var(--text-secondary)' }}>accelerate your career.</span>
             </motion.h2>
-            <motion.p variants={slowFadeUp} style={{ fontSize: '1.15rem', maxWidth: 600, margin: '0 auto', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-              From intelligent resume scoring to automated email dispatches, CareerPlanet powers every step of placement.
-            </motion.p>
           </motion.div>
 
-          {/* Bento Grid */}
+          {/* Premium Bento Grid */}
           <motion.div
             initial="hidden" whileInView="show" viewport={{ once: true }} variants={slowStagger}
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.75rem' }}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}
           >
             {features.map((f, i) => (
               <motion.div 
@@ -508,21 +372,20 @@ export default function Landing() {
                 variants={slowFadeUp} 
                 className="glass-card" 
                 style={{ 
-                  padding: '2.5rem',
+                  padding: '3rem 2.5rem',
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  gridColumn: i === 0 || i === 3 ? 'span 2' : 'span 1'
+                  gridColumn: i === 0 || i === 3 ? 'span 2' : 'span 1',
+                  background: 'var(--surface-2)',
+                  border: '1px solid var(--border-light)'
                 }}
               >
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem' }}>
-                    <div style={{ fontSize: '2.5rem' }}>{f.icon}</div>
-                    <span className="badge badge-indigo" style={{ fontSize: '0.75rem', padding: '0.35rem 0.85rem' }}>{f.tag}</span>
-                  </div>
-                  <h3 style={{ marginBottom: '0.85rem', fontSize: '1.35rem', color: '#ffffff', fontWeight: 800 }}>{f.title}</h3>
-                  <p style={{ fontSize: '0.95rem', lineHeight: 1.7, color: 'var(--text-secondary)' }}>{f.desc}</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem' }}>
+                  <div style={{ fontSize: '2.5rem', background: 'var(--surface-3)', padding: '1rem', borderRadius: '16px', border: '1px solid var(--border)' }}>{f.icon}</div>
+                  <span className="badge" style={{ background: 'var(--surface-3)' }}>{f.tag}</span>
                 </div>
+                <h3 style={{ marginBottom: '1rem', fontSize: '1.5rem', color: 'var(--text-primary)' }}>{f.title}</h3>
+                <p style={{ fontSize: '1rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>{f.desc}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -530,44 +393,49 @@ export default function Landing() {
       </section>
 
       {/* ── CALL TO ACTION ─────────────────────────── */}
-      <section style={{ padding: '5rem 1rem 8rem' }}>
+      <section style={{ padding: '6rem 1rem 8rem' }}>
         <div className="container">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              textAlign: 'center', padding: '6rem 2.5rem',
-              background: 'linear-gradient(135deg, var(--primary-light) 0%, rgba(139, 92, 246, 0.15) 100%)',
-              borderRadius: 36, color: 'white',
-              border: '1px solid var(--border-glow)',
-              boxShadow: '0 30px 80px rgba(0,0,0,0.6), var(--shadow-glow)',
+              textAlign: 'center', padding: '8rem 2rem',
+              background: 'radial-gradient(ellipse at top, var(--surface-2) 0%, var(--surface) 100%)',
+              borderRadius: 'var(--radius-xl)',
+              border: '1px solid var(--border)',
+              boxShadow: 'var(--shadow-xl)',
               position: 'relative',
               overflow: 'hidden'
             }}
           >
-            <h2 style={{ color: 'white', marginBottom: '1.5rem', fontSize: 'clamp(2.25rem, 4.5vw, 3.5rem)', fontWeight: 900 }}>
-              Ready to transform your career trajectory?
+            {/* Background Glow */}
+            <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '80%', height: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)', filter: 'blur(40px)' }} />
+
+            <h2 style={{ color: 'var(--text-primary)', marginBottom: '1.5rem', fontSize: 'clamp(2.5rem, 5vw, 4rem)', position: 'relative', zIndex: 1 }}>
+              Ready to transform your <br/> career trajectory?
             </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '3rem', maxWidth: 600, margin: '0 auto 3rem', lineHeight: 1.7 }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.25rem', marginBottom: '3.5rem', maxWidth: 600, margin: '0 auto 3.5rem', position: 'relative', zIndex: 1 }}>
               Join thousands of candidates and tier-1 recruiters connecting seamlessly on CareerPlanet today.
             </p>
-            <Link to="/register" className="btn btn-primary btn-lg" style={{ borderRadius: 'var(--radius-full)', padding: '1.15rem 3rem', fontSize: '1.1rem', fontWeight: 800 }}>
-              Create Free Account →
-            </Link>
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <Link to="/register" className="btn btn-primary btn-lg" style={{ padding: '1rem 3rem' }}>
+                Create Free Account
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* ── FOOTER ─────────────────────────────────── */}
-      <footer style={{ borderTop: '1px solid var(--border)', padding: '3rem 1rem', background: 'var(--bg-subtle)' }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
+      <footer style={{ borderTop: '1px solid var(--border)', padding: '4rem 1rem', background: 'var(--bg)' }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '2rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ width: 32, height: 32, borderRadius: 10, background: 'var(--gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontWeight: 900, fontSize: '0.9rem' }}>C</div>
-            <span style={{ fontWeight: 900, color: '#ffffff', fontSize: '1.1rem' }}>CareerPlanet</span>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg)', fontWeight: 800, fontSize: '1rem' }}>C</div>
+            <span style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1.25rem', letterSpacing: '-0.02em' }}>CareerPlanet</span>
           </div>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)' }}>© 2026 CareerPlanet AI Platform. All rights reserved.</p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontWeight: 500 }}>© 2026 CareerPlanet. All rights reserved.</p>
         </div>
       </footer>
 

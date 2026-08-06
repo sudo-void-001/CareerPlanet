@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const THEMES = [
+  { id: 'dark',   label: 'Premium Dark', color: '#ffffff', desc: 'Minimalist & sleek' },
   { id: 'sunset', label: 'Funda Orange', color: '#f97316', desc: 'Warm orange accent' },
   { id: 'indigo', label: 'Indigo',       color: '#6366f1', desc: 'Classic purple' },
   { id: 'ocean',  label: 'Ocean Cyan',   color: '#0891b2', desc: 'Cool teal & cyan' },
@@ -12,7 +13,7 @@ const THEMES = [
 function ThemeSwitcher() {
   const [open, setOpen] = useState(false);
   const ref = useRef();
-  const [current, setCurrent] = useState(() => localStorage.getItem('cv-theme') || 'sunset');
+  const [current, setCurrent] = useState(() => localStorage.getItem('cv-theme') || 'dark');
 
   useEffect(() => {
     const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
@@ -133,11 +134,11 @@ export default function Navbar() {
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       style={{
         position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(9, 10, 15, 0.88)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.5)',
+        background: 'rgba(10, 10, 10, 0.7)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        borderBottom: '1px solid var(--border)',
+        boxShadow: 'var(--shadow-sm)',
       }}
     >
       <div className="container" style={{ display: 'flex', alignItems: 'center', height: '4.25rem', justifyContent: 'space-between' }}>
@@ -146,7 +147,7 @@ export default function Navbar() {
           <div style={{
             width: 36, height: 36, borderRadius: 10,
             background: 'var(--gradient)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontWeight: 900, fontSize: '1.05rem',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000000', fontWeight: 900, fontSize: '1.05rem',
             boxShadow: 'var(--shadow-glow)'
           }}>C</div>
           <span style={{ fontWeight: 900, fontSize: '1.2rem', color: '#ffffff', letterSpacing: '-0.02em', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>

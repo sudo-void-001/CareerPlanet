@@ -24,6 +24,51 @@ const testimonials = [
   }
 ];
 
+const FloatingInput = ({ label, type, value, onChange, placeholder, required, disabled }) => {
+  const [focused, setFocused] = useState(false);
+  const isFloating = focused || value;
+  
+  return (
+    <div style={{ position: 'relative', width: '100%', marginBottom: '1.25rem' }}>
+      <input
+        type={type}
+        required={required}
+        value={value}
+        onChange={onChange}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        disabled={disabled}
+        className="input"
+        placeholder={focused ? placeholder : ''}
+        style={{
+          paddingTop: '1.5rem',
+          paddingBottom: '0.5rem',
+          height: '3.5rem',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          background: focused ? 'var(--bg)' : 'var(--surface)',
+          borderColor: focused ? 'var(--text-primary)' : 'var(--border)'
+        }}
+      />
+      <label
+        style={{
+          position: 'absolute',
+          left: '1rem',
+          top: isFloating ? '0.5rem' : '1.1rem',
+          fontSize: isFloating ? '0.7rem' : '0.875rem',
+          color: focused ? 'var(--text-primary)' : 'var(--text-tertiary)',
+          pointerEvents: 'none',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          fontWeight: isFloating ? 600 : 400,
+          textTransform: isFloating ? 'uppercase' : 'none',
+          letterSpacing: isFloating ? '0.05em' : 'normal'
+        }}
+      >
+        {label}
+      </label>
+    </div>
+  );
+};
+
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -97,17 +142,17 @@ export default function Login() {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', width: '100%', background: '#07080c', color: '#f8fafc' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', width: '100%', background: 'var(--bg)', color: 'var(--text-primary)' }}>
       
       {/* Left Panel */}
       <motion.div 
-        initial={{ opacity: 0, x: -40 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
         style={{
           width: '45%',
-          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.08) 50%, #0d0f17 100%)',
-          borderRight: '1px solid rgba(255,255,255,0.08)',
+          background: 'radial-gradient(circle at 0% 100%, rgba(255,255,255,0.08) 0%, var(--bg) 60%), linear-gradient(180deg, var(--bg) 0%, var(--surface-2) 100%)',
+          borderRight: '1px solid var(--border)',
           padding: '4rem',
           display: 'flex',
           flexDirection: 'column',
@@ -117,41 +162,51 @@ export default function Login() {
         }}
       >
         <div style={{ position: 'relative', zIndex: 10 }}>
-          <div style={{ fontSize: '1.75rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '0.625rem', color: '#ffffff' }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #10b981, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontWeight: 800, fontSize: '1.1rem' }}>C</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--text-primary)' }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg)', fontWeight: 800, fontSize: '1rem' }}>C</div>
             CareerPlanet
           </div>
-          <h2 style={{ fontSize: '3rem', fontWeight: '800', lineHeight: '1.15', marginTop: '3rem', marginBottom: '1.25rem', letterSpacing: '-0.03em' }}>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            style={{ fontSize: '3.25rem', fontWeight: '800', lineHeight: '1.1', marginTop: '4rem', marginBottom: '1.5rem', letterSpacing: '-0.04em' }}
+          >
             Launch your career into <br/>
-            <span className="gradient-text">the stratosphere.</span>
-          </h2>
-          <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', maxWidth: '420px', lineHeight: '1.7' }}>
+            <span style={{ color: 'var(--text-secondary)' }}>the stratosphere.</span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            style={{ fontSize: '1.125rem', color: 'var(--text-tertiary)', maxWidth: '420px', lineHeight: '1.6' }}
+          >
             AI-powered resume optimization, smart job matching, and direct 1-click recruiter messaging.
-          </p>
+          </motion.p>
         </div>
 
         {/* Testimonial slider */}
-        <div style={{ position: 'relative', zIndex: 10, height: '170px' }}>
+        <div style={{ position: 'relative', zIndex: 10, height: '180px' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTestimonial}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, filter: 'blur(10px)', y: 10 }}
+              animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+              exit={{ opacity: 0, filter: 'blur(10px)', y: -10 }}
               transition={{ duration: 0.5 }}
               className="glass-card"
-              style={{ padding: '1.75rem', borderRadius: 20 }}
+              style={{ padding: '2rem', borderRadius: 24, border: '1px solid var(--border)' }}
             >
-              <p style={{ fontSize: '0.95rem', fontStyle: 'italic', marginBottom: '1.25rem', lineHeight: '1.6', color: '#e2e8f0' }}>
+              <p style={{ fontSize: '1rem', fontStyle: 'italic', marginBottom: '1.5rem', lineHeight: '1.6', color: 'var(--text-secondary)' }}>
                 "{testimonials[activeTestimonial].quote}"
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #06b6d4)', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--surface-3)', border: '1px solid var(--border)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600' }}>
                   {testimonials[activeTestimonial].author.charAt(0)}
                 </div>
                 <div>
-                  <div style={{ fontWeight: '700', fontSize: '0.90625rem', color: '#ffffff' }}>{testimonials[activeTestimonial].author}</div>
-                  <div style={{ fontSize: '0.78125rem', color: '#34d399' }}>{testimonials[activeTestimonial].role} @ {testimonials[activeTestimonial].company}</div>
+                  <div style={{ fontWeight: '600', fontSize: '0.9375rem', color: 'var(--text-primary)' }}>{testimonials[activeTestimonial].author}</div>
+                  <div style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)' }}>{testimonials[activeTestimonial].role} @ {testimonials[activeTestimonial].company}</div>
                 </div>
               </div>
             </motion.div>
@@ -161,91 +216,92 @@ export default function Login() {
 
       {/* Right Panel Form */}
       <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
         style={{
           width: '55%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '3rem 2rem',
+          background: 'var(--bg)'
         }}
       >
-        <div style={{ width: '100%', maxWidth: '440px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <div>
-            <h1 style={{ fontSize: '2.25rem', fontWeight: 800, marginBottom: '0.5rem', color: '#ffffff' }}>Welcome back</h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Sign in to access your dashboard & job applications.</p>
+            <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem', letterSpacing: '-0.03em' }}>Welcome back</h1>
+            <p style={{ color: 'var(--text-tertiary)', fontSize: '0.95rem' }}>Sign in to access your dashboard & job applications.</p>
           </div>
 
-          {error && <div style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.875rem 1rem', borderRadius: 12, fontSize: '0.875rem' }}>{error}</div>}
-          {successMsg && <div style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '0.875rem 1rem', borderRadius: 12, fontSize: '0.875rem' }}>{successMsg}</div>}
+          {error && <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '0.875rem 1rem', borderRadius: 12, fontSize: '0.875rem' }}>{error}</motion.div>}
+          {successMsg && <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '0.875rem 1rem', borderRadius: 12, fontSize: '0.875rem' }}>{successMsg}</motion.div>}
 
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div>
-              <label className="label">Email Address</label>
-              <input 
-                type="email" 
-                required 
-                className="input" 
-                placeholder="arjun@student.demo"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+            <FloatingInput
+              label="Email Address"
+              type="email"
+              required
+              placeholder="arjun@student.demo"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+            />
 
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                <label className="label" style={{ marginBottom: 0 }}>Password</label>
-                <a href="#" style={{ fontSize: '0.8125rem', color: '#10b981', textDecoration: 'none', fontWeight: 600 }}>Forgot password?</a>
-              </div>
-              <input 
-                type="password" 
-                required 
-                className="input" 
+            <div style={{ position: 'relative' }}>
+              <FloatingInput
+                label="Password"
+                type="password"
+                required
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
               />
+              <a href="#" style={{ position: 'absolute', right: '1rem', top: '1.2rem', fontSize: '0.8125rem', color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 500, zIndex: 10 }}>Forgot?</a>
             </div>
 
             <button 
               type="submit" 
               className="btn btn-primary btn-lg" 
-              style={{ width: '100%', borderRadius: 14, marginTop: '0.5rem' }}
+              style={{ width: '100%', borderRadius: 12, marginTop: '0.5rem', fontWeight: 600 }}
               disabled={loading}
             >
-              {loading ? 'Signing in...' : 'Sign In →'}
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          <div style={{ textAlign: 'center', fontSize: '0.90625rem', color: 'var(--text-secondary)' }}>
-            Don't have an account? <span style={{ color: '#10b981', fontWeight: 700, cursor: 'pointer' }} onClick={() => navigate('/register')}>Create account</span>
+          <div style={{ textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-tertiary)' }}>
+            Don't have an account? <span style={{ color: 'var(--text-primary)', fontWeight: 600, cursor: 'pointer', transition: 'color 0.2s' }} onClick={() => navigate('/register')}>Create account</span>
           </div>
 
-          <div className="divider" />
+          <div className="divider" style={{ margin: '1rem 0' }} />
 
           {/* Quick Demo Login Buttons */}
           <div>
-            <p style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, marginBottom: '0.75rem', textAlign: 'center' }}>Quick Demo Access</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, marginBottom: '1rem', textAlign: 'center' }}>Quick Demo Access</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <button 
                 type="button"
-                className="glass-card" 
-                style={{ padding: '0.875rem', cursor: 'pointer', textAlign: 'center', color: '#ffffff' }}
+                className="card-flat" 
+                style={{ padding: '1rem', cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s', background: 'var(--surface)' }}
                 onClick={() => handleDemoClick('student')}
+                onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--text-primary)'}
+                onMouseOut={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
               >
-                <span style={{ fontSize: '1.25rem', display: 'block', marginBottom: '0.25rem' }}>🎓</span>
-                <span style={{ fontSize: '0.875rem', fontWeight: 700 }}>Student Demo</span>
+                <span style={{ fontSize: '1.25rem', display: 'block', marginBottom: '0.5rem' }}>🎓</span>
+                <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Student Demo</span>
               </button>
               <button 
                 type="button"
-                className="glass-card" 
-                style={{ padding: '0.875rem', cursor: 'pointer', textAlign: 'center', color: '#ffffff' }}
+                className="card-flat" 
+                style={{ padding: '1rem', cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s', background: 'var(--surface)' }}
                 onClick={() => handleDemoClick('recruiter')}
+                onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--text-primary)'}
+                onMouseOut={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
               >
-                <span style={{ fontSize: '1.25rem', display: 'block', marginBottom: '0.25rem' }}>🏢</span>
-                <span style={{ fontSize: '0.875rem', fontWeight: 700 }}>Recruiter Demo</span>
+                <span style={{ fontSize: '1.25rem', display: 'block', marginBottom: '0.5rem' }}>🏢</span>
+                <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Recruiter Demo</span>
               </button>
             </div>
           </div>

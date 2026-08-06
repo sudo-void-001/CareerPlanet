@@ -74,10 +74,10 @@ export default function AIAssistant() {
         style={{
           position: 'fixed', bottom: '1.75rem', right: '1.75rem', zIndex: 1000,
           width: 58, height: 58, borderRadius: '50%',
-          background: 'linear-gradient(135deg, #10b981, #06b6d4)',
-          border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer', color: '#000',
+          background: 'linear-gradient(135deg, var(--surface-3), var(--surface-2))',
+          border: '1px solid var(--border-strong)', cursor: 'pointer', color: 'var(--text-primary)',
           fontSize: '1.5rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 8px 30px rgba(16, 185, 129, 0.45), 0 0 20px rgba(6, 182, 212, 0.3)',
+          boxShadow: 'var(--shadow-lg), var(--shadow-glow)',
         }}
         title="AI Career Assistant"
       >
@@ -95,11 +95,11 @@ export default function AIAssistant() {
             style={{
               position: 'fixed', bottom: '5.5rem', right: '1.75rem', zIndex: 999,
               width: 400, height: 540, borderRadius: 24,
-              background: 'rgba(13, 15, 23, 0.92)',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              boxShadow: '0 25px 70px rgba(0,0,0,0.8), 0 0 40px rgba(16, 185, 129, 0.15)',
+              background: 'var(--bg-subtle)',
+              backdropFilter: 'blur(32px)',
+              WebkitBackdropFilter: 'blur(32px)',
+              border: '1px solid var(--border-strong)',
+              boxShadow: 'var(--shadow-xl), var(--shadow-glow)',
               display: 'flex',
               flexDirection: 'column',
               overflow: 'hidden',
@@ -108,18 +108,18 @@ export default function AIAssistant() {
             {/* Header */}
             <div style={{
               padding: '1.25rem 1.5rem',
-              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.15))',
-              borderBottom: '1px solid rgba(255,255,255,0.08)',
-              color: 'white',
+              background: 'var(--surface)',
+              borderBottom: '1px solid var(--border)',
+              color: 'var(--text-primary)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #10b981, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontWeight: 800, fontSize: '0.9rem' }}>✦</div>
+                <div style={{ width: 32, height: 32, borderRadius: 10, background: 'var(--surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)', fontWeight: 800, fontSize: '0.9rem', border: '1px solid var(--border)' }}>✦</div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.95rem', letterSpacing: '-0.01em', color: '#f8fafc' }}>AI Career Assistant</div>
-                  <div style={{ fontSize: '0.75rem', color: '#34d399' }}>● Groq Intelligence Active</div>
+                  <div style={{ fontWeight: 700, fontSize: '0.95rem', letterSpacing: '-0.01em', color: 'var(--text-primary)' }}>AI Career Assistant</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--success)' }}>● Groq Intelligence Active</div>
                 </div>
               </div>
               <button 
@@ -140,28 +140,28 @@ export default function AIAssistant() {
                     maxWidth: '85%',
                     padding: '0.875rem 1.125rem',
                     borderRadius: msg.sender === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
-                    background: msg.sender === 'user' ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255, 255, 255, 0.05)',
-                    border: msg.sender === 'user' ? 'none' : '1px solid rgba(255,255,255,0.08)',
-                    color: msg.sender === 'user' ? '#ffffff' : '#e2e8f0',
-                    fontSize: '0.84375rem',
+                    background: msg.sender === 'user' ? 'var(--surface-3)' : 'var(--surface-2)',
+                    border: msg.sender === 'user' ? '1px solid var(--border-strong)' : '1px solid var(--border)',
+                    color: msg.sender === 'user' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    fontSize: '0.875rem',
                     lineHeight: 1.6,
-                    boxShadow: msg.sender === 'user' ? '0 4px 15px rgba(16, 185, 129, 0.3)' : '0 2px 8px rgba(0,0,0,0.3)'
+                    boxShadow: 'var(--shadow-sm)'
                   }}
                   dangerouslySetInnerHTML={{ __html: parseMarkdown(msg.text) }}
                 />
               ))}
               
               {loading && (
-                <div style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.125rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '20px 20px 20px 4px', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', animation: 'pulse-glow 1.5s infinite' }} />
-                  <span style={{ fontSize: '0.78125rem', color: '#94a3b8' }}>AI is thinking...</span>
+                <div style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.125rem', background: 'var(--surface-2)', borderRadius: '20px 20px 20px 4px', border: '1px solid var(--border)' }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--text-secondary)', animation: 'pulse-glow 1.5s infinite' }} />
+                  <span style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)' }}>AI is thinking...</span>
                 </div>
               )}
               <div ref={chatEndRef} />
             </div>
 
             {/* Bottom Actions & Input */}
-            <div style={{ padding: '0.875rem 1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)', background: 'rgba(7, 8, 12, 0.95)' }}>
+            <div style={{ padding: '1rem 1.25rem', borderTop: '1px solid var(--border)', background: 'var(--bg)' }}>
               {/* Quick Actions Scrollable Row */}
               <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.625rem', marginBottom: '0.625rem', scrollbarWidth: 'none' }}>
                 {ACTIONS.map(action => (

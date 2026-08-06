@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../api/axios';
 import { StatusBadge } from '../../components/common/UI';
-import { FiBriefcase, FiMapPin, FiClock, FiSearch } from 'react-icons/fi';
 
 const Applications = () => {
   const [applications, setApplications] = useState([]);
@@ -59,17 +58,17 @@ const Applications = () => {
     return name ? name.substring(0, 2).toUpperCase() : 'CO';
   };
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return 'Recently';
-    try {
-      const diff = new Date() - new Date(dateStr);
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      if (days <= 0) return 'Today';
-      if (days === 1) return 'Yesterday';
-      return `${days} days ago`;
-    } catch {
-      return 'Recently';
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
     }
+  };
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
   };
 
   return (
@@ -77,39 +76,47 @@ const Applications = () => {
       <div className="container">
         
         {/* Header */}
-        <div style={{ marginBottom: '2.5rem' }}>
-          <span className="badge badge-green" style={{ marginBottom: '0.75rem', display: 'inline-flex' }}>✦ Application Tracking</span>
-          <h1 style={{ marginBottom: '0.5rem', fontSize: '2.75rem' }}>My Applications</h1>
-          <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>Track your career applications, pipeline status, and recruiter dispatches.</p>
+        <div style={{ marginBottom: '3rem' }}>
+          <span className="badge badge-indigo" style={{ marginBottom: '1rem', display: 'inline-flex' }}>✦ Application Tracking</span>
+          <h1 style={{ marginBottom: '0.75rem', fontSize: '3rem', fontWeight: 800 }}>My Applications</h1>
+          <p style={{ fontSize: '1.15rem', color: 'var(--text-secondary)', maxWidth: '600px' }}>Track your career applications, pipeline status, and recruiter dispatches in real-time.</p>
         </div>
 
         {/* Stats Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
           {[
-            { label: 'Total Submitted', value: stats.total, color: '#38bdf8' },
-            { label: 'In Review', value: stats.inProgress, color: '#fbbf24' },
-            { label: 'Shortlisted', value: stats.shortlisted, color: '#34d399' },
-            { label: 'Rejected', value: stats.rejected, color: '#f87171' }
+            { label: 'Total Submitted', value: stats.total, color: 'var(--info)' },
+            { label: 'In Review', value: stats.inProgress, color: 'var(--warning)' },
+            { label: 'Shortlisted', value: stats.shortlisted, color: 'var(--success)' },
+            { label: 'Rejected', value: stats.rejected, color: 'var(--danger)' }
           ].map((s, idx) => (
-            <div key={idx} className="glass-card" style={{ padding: '1.5rem' }}>
-              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>{s.label}</div>
-              <div style={{ fontSize: '2.25rem', fontWeight: 800, color: s.color }}>{s.value}</div>
-            </div>
+            <motion.div 
+              key={idx} 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: idx * 0.1 }}
+              className="glass-card" 
+              style={{ padding: '1.75rem', borderTop: `4px solid ${s.color}` }}
+            >
+              <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>{s.label}</div>
+              <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>{s.value}</div>
+            </motion.div>
           ))}
         </div>
 
         {/* Filter Tabs */}
-        <div style={{ display: 'flex', gap: '0.625rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2.5rem', padding: '0.5rem', background: 'var(--surface-2)', borderRadius: 'var(--radius)', width: 'fit-content' }}>
           {['All', 'In Progress', 'Shortlisted', 'Rejected'].map(tab => (
             <button
               key={tab}
               onClick={() => setFilter(tab)}
               className="btn"
               style={{
-                background: filter === tab ? 'rgba(16, 185, 129, 0.15)' : 'transparent',
-                color: filter === tab ? '#34d399' : 'var(--text-secondary)',
-                border: filter === tab ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border)',
-                borderRadius: 'var(--radius-full)'
+                background: filter === tab ? 'var(--surface-3)' : 'transparent',
+                color: filter === tab ? 'var(--text-primary)' : 'var(--text-secondary)',
+                border: filter === tab ? '1px solid var(--border-strong)' : '1px solid transparent',
+                borderRadius: 'var(--radius-sm)',
+                boxShadow: filter === tab ? 'var(--shadow-sm)' : 'none'
               }}
             >
               {tab}
@@ -119,11 +126,27 @@ const Applications = () => {
 
         {/* Applications List */}
         {loading ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {[1,2,3].map(n => <div key={n} className="skeleton" style={{ height: 180 }} />)}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {[1,2,3].map(n => (
+              <div key={n} className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <div className="skeleton" style={{ width: 56, height: 56, borderRadius: 'var(--radius)' }} />
+                  <div style={{ flex: 1 }}>
+                    <div className="skeleton" style={{ width: '40%', height: 24, marginBottom: '0.5rem' }} />
+                    <div className="skeleton" style={{ width: '20%', height: 16 }} />
+                  </div>
+                </div>
+                <div className="skeleton" style={{ width: '100%', height: 80, borderRadius: 'var(--radius)' }} />
+              </div>
+            ))}
           </div>
         ) : filteredApps.length > 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+          >
             <AnimatePresence>
               {filteredApps.map((app, index) => {
                 const job = jobs[app.job_id] || {};
@@ -140,49 +163,48 @@ const Applications = () => {
                 return (
                   <motion.div
                     key={app.id}
+                    variants={itemVariants}
                     layout
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     className="glass-card"
-                    style={{ padding: '1.75rem' }}
+                    style={{ padding: '2rem' }}
                   >
                     {/* Header line */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
-                      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '2rem' }}>
+                      <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
                         <img 
                           src={logoUrl} 
                           alt={companyName} 
-                          style={{ width: 48, height: 48, borderRadius: 12, objectFit: 'cover' }}
+                          style={{ width: 56, height: 56, borderRadius: 'var(--radius)', objectFit: 'cover', border: '1px solid var(--border)' }}
                           onError={(e) => {
                             e.target.onerror = null; 
                             e.target.style.display = 'none';
                             e.target.nextSibling.style.display = 'flex';
                           }}
                         />
-                        <div style={{ display: 'none', width: 48, height: 48, borderRadius: 12, background: 'linear-gradient(135deg, #10b981, #06b6d4)', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#000' }}>
+                        <div style={{ display: 'none', width: 56, height: 56, borderRadius: 'var(--radius)', background: 'var(--gradient)', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#000', border: '1px solid var(--border)' }}>
                           {getInitials(companyName)}
                         </div>
                         <div>
-                          <h3 style={{ fontSize: '1.2rem', color: '#ffffff', marginBottom: '0.2rem' }}>{job.title || 'Role Application'}</h3>
-                          <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)' }}>{companyName} • {job.location || 'Remote'}</div>
+                          <h3 style={{ fontSize: '1.35rem', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>{job.title || 'Role Application'}</h3>
+                          <div style={{ fontSize: '0.9375rem', color: 'var(--text-tertiary)', fontWeight: 500 }}>{companyName} • {job.location || 'Remote'}</div>
                         </div>
                       </div>
 
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.75rem' }}>
                         <StatusBadge status={app.status} />
-                        <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
-                          {app.application_email_sent && <span className="badge badge-green" style={{ fontSize: '0.6875rem' }}>✉️ Recruiter Emailed</span>}
-                          {app.shortlist_email_sent && <span className="badge badge-blue" style={{ fontSize: '0.6875rem' }}>🌟 Shortlisted</span>}
-                          {app.interview_email_sent && <span className="badge badge-violet" style={{ fontSize: '0.6875rem' }}>🎤 Interview Invited</span>}
-                          {app.selection_email_sent && <span className="badge badge-amber" style={{ fontSize: '0.6875rem' }}>🎉 Offer Received</span>}
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {app.application_email_sent && <span className="badge badge-green">✉️ Emailed</span>}
+                          {app.shortlist_email_sent && <span className="badge badge-indigo">🌟 Shortlisted</span>}
+                          {app.interview_email_sent && <span className="badge badge-violet">🎤 Interview</span>}
+                          {app.selection_email_sent && <span className="badge badge-amber">🎉 Offer</span>}
                         </div>
                       </div>
                     </div>
 
                     {/* Timeline */}
                     {app.status.toLowerCase() !== 'rejected' ? (
-                      <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '1.25rem', borderRadius: 16, border: '1px solid rgba(255, 255, 255, 0.05)', marginBottom: app.recruiter_message ? '1.25rem' : 0 }}>
+                      <div style={{ background: 'var(--surface-2)', padding: '2rem 1rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-light)', marginBottom: app.recruiter_message ? '1.5rem' : 0 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative' }}>
                           {timelineSteps.map((step, idx) => {
                             const isActive = idx <= currentStepIndex;
@@ -195,33 +217,33 @@ const Applications = () => {
                                     position: 'absolute',
                                     left: '-50%',
                                     right: '50%',
-                                    top: '12px',
-                                    height: '3px',
-                                    background: idx <= currentStepIndex ? '#10b981' : 'rgba(255,255,255,0.1)',
+                                    top: '14px',
+                                    height: '2px',
+                                    background: idx <= currentStepIndex ? 'var(--primary)' : 'var(--border-strong)',
                                     zIndex: 1
                                   }} />
                                 )}
                                 <div style={{
-                                  width: '26px',
-                                  height: '26px',
+                                  width: '30px',
+                                  height: '30px',
                                   borderRadius: '50%',
                                   border: '2px solid',
-                                  borderColor: isActive ? '#10b981' : 'rgba(255,255,255,0.2)',
-                                  backgroundColor: isCurrent ? '#10b981' : '#0d0f17',
+                                  borderColor: isActive ? 'var(--primary)' : 'var(--border-strong)',
+                                  backgroundColor: isCurrent ? 'var(--primary)' : 'var(--surface-3)',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   zIndex: 2,
-                                  boxShadow: isCurrent ? '0 0 15px rgba(16,185,129,0.6)' : 'none',
+                                  boxShadow: isCurrent ? '0 0 20px var(--border-glow)' : 'none',
                                 }}>
-                                  {isActive && <div style={{ width: '8px', height: '8px', backgroundColor: isCurrent ? '#000000' : '#10b981', borderRadius: '50%' }} />}
+                                  {isActive && <div style={{ width: '10px', height: '10px', backgroundColor: isCurrent ? '#000000' : 'var(--primary)', borderRadius: '50%' }} />}
                                 </div>
                                 <span style={{
-                                  marginTop: '0.625rem',
-                                  fontSize: '0.75rem',
+                                  marginTop: '1rem',
+                                  fontSize: '0.8125rem',
                                   textTransform: 'uppercase',
-                                  letterSpacing: '0.04em',
-                                  color: isCurrent ? '#34d399' : isActive ? '#f8fafc' : 'var(--text-tertiary)',
+                                  letterSpacing: '0.05em',
+                                  color: isCurrent ? 'var(--primary)' : isActive ? 'var(--text-primary)' : 'var(--text-tertiary)',
                                   fontWeight: isActive ? 700 : 500
                                 }}>
                                   {step}
@@ -232,16 +254,20 @@ const Applications = () => {
                         </div>
                       </div>
                     ) : (
-                      <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '1rem 1.25rem', borderRadius: 14, color: '#f87171', fontSize: '0.875rem' }}>
-                        🚫 Application status updated to Rejected. Use AI Assistant to prep & refine skills before applying to new opportunities.
+                      <div style={{ background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '1.25rem 1.5rem', borderRadius: 'var(--radius-lg)', color: 'var(--danger)', fontSize: '0.9375rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        <span style={{ fontSize: '1.5rem' }}>🚫</span>
+                        <div>
+                          <strong style={{ display: 'block', marginBottom: '0.25rem' }}>Application Rejected</strong>
+                          <span>Use the AI Assistant to prep & refine skills before applying to new opportunities.</span>
+                        </div>
                       </div>
                     )}
 
                     {/* Custom Recruiter Message */}
                     {app.recruiter_message && (
-                      <div style={{ padding: '1.25rem', background: 'rgba(139, 92, 246, 0.1)', borderLeft: '4px solid #8b5cf6', borderRadius: '0 0 16px 16px', marginTop: '1rem' }}>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#c084fc', marginBottom: '0.35rem', textTransform: 'uppercase' }}>✉️ Personal Note from Recruiter</div>
-                        <p style={{ margin: 0, fontSize: '0.90625rem', color: '#f8fafc', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{app.recruiter_message}</p>
+                      <div style={{ padding: '1.5rem', background: 'rgba(139, 92, 246, 0.05)', borderLeft: '4px solid var(--accent-purple)', borderRadius: '0 var(--radius-lg) var(--radius-lg) 0', marginTop: '1.5rem' }}>
+                        <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--accent-purple)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>✉️ Note from Recruiter</div>
+                        <p style={{ margin: 0, fontSize: '0.9375rem', color: 'var(--text-primary)', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{app.recruiter_message}</p>
                       </div>
                     )}
 
@@ -249,13 +275,17 @@ const Applications = () => {
                 );
               })}
             </AnimatePresence>
-          </div>
+          </motion.div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '5rem 2rem', background: 'rgba(19, 21, 31, 0.5)', borderRadius: 24, border: '1px dashed var(--border)' }}>
-            <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🚀</div>
-            <h3 style={{ fontSize: '1.35rem', color: '#ffffff', marginBottom: '0.5rem' }}>No applications recorded</h3>
-            <p style={{ color: 'var(--text-secondary)' }}>You haven't submitted any job applications under this status filter.</p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            style={{ textAlign: 'center', padding: '6rem 2rem', background: 'var(--surface-2)', borderRadius: 'var(--radius-xl)', border: '1px dashed var(--border)' }}
+          >
+            <div style={{ fontSize: '4rem', marginBottom: '1.5rem', opacity: 0.8 }}>🚀</div>
+            <h3 style={{ fontSize: '1.75rem', color: 'var(--text-primary)', marginBottom: '0.75rem' }}>No applications found</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>You haven't submitted any job applications under this filter.</p>
+          </motion.div>
         )}
 
       </div>

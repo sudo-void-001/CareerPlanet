@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../api/axios';
 import { StatusBadge } from '../../components/common/UI';
 
@@ -67,40 +67,64 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="page hero-gradient">
+    <div className="page" style={{ background: 'var(--bg)' }}>
       <div className="container">
         
         {/* Header */}
-        <div style={{ marginBottom: '2.5rem' }}>
-          <span className="badge badge-green" style={{ marginBottom: '0.75rem', display: 'inline-flex' }}>⚡ Command Center</span>
-          <h1 style={{ fontSize: '2.75rem', margin: 0 }}>Platform Administration</h1>
-          <p style={{ color: 'var(--text-secondary)', marginTop: '0.2rem' }}>Global placement monitoring, user management, and job analytics.</p>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{ marginBottom: '3rem' }}
+        >
+          <span className="badge" style={{ marginBottom: '1rem', background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)' }}>⚡ Command Center</span>
+          <h1 style={{ fontSize: '3rem', margin: 0, letterSpacing: '-0.04em' }}>Platform Administration</h1>
+          <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem', fontSize: '1.125rem' }}>Global placement monitoring, user management, and job analytics.</p>
+        </motion.div>
 
-        {/* Stats Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
-          <div className="glass-card" style={{ padding: '1.5rem' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Total Job Openings</div>
-            <div style={{ fontSize: '2.25rem', fontWeight: 800, color: '#38bdf8', marginTop: '0.25rem' }}>{stats.totalJobs}</div>
+        {loading ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="stat-card skeleton" style={{ height: '120px' }}></div>
+            ))}
           </div>
-          <div className="glass-card" style={{ padding: '1.5rem' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Applications</div>
-            <div style={{ fontSize: '2.25rem', fontWeight: 800, color: '#fbbf24', marginTop: '0.25rem' }}>{stats.totalApps}</div>
-          </div>
-          <div className="glass-card" style={{ padding: '1.5rem' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Shortlisted</div>
-            <div style={{ fontSize: '2.25rem', fontWeight: 800, color: '#34d399', marginTop: '0.25rem' }}>{stats.shortlisted}</div>
-          </div>
-          <div className="glass-card" style={{ padding: '1.5rem' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Offers Extended</div>
-            <div style={{ fontSize: '2.25rem', fontWeight: 800, color: '#c084fc', marginTop: '0.25rem' }}>{stats.hired}</div>
-          </div>
-        </div>
+        ) : (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}
+          >
+            <div className="stat-card">
+              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Job Openings</div>
+              <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.5rem', letterSpacing: '-0.03em' }}>{stats.totalJobs}</div>
+            </div>
+            <div className="stat-card">
+              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Applications</div>
+              <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.5rem', letterSpacing: '-0.03em' }}>{stats.totalApps}</div>
+            </div>
+            <div className="stat-card">
+              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Shortlisted</div>
+              <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.5rem', letterSpacing: '-0.03em' }}>{stats.shortlisted}</div>
+            </div>
+            <div className="stat-card">
+              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Offers Extended</div>
+              <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.5rem', letterSpacing: '-0.03em' }}>{stats.hired}</div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Section: User Management */}
-        <div className="glass-card" style={{ padding: '1.75rem', marginBottom: '2.5rem' }}>
-          <h3 style={{ fontSize: '1.25rem', color: '#ffffff', marginBottom: '1.25rem' }}>User Management Control</h3>
-          {users.length > 0 ? (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="card-flat" 
+          style={{ padding: '2rem', marginBottom: '3rem' }}
+        >
+          <h3 style={{ fontSize: '1.25rem', color: 'var(--text-primary)', marginBottom: '1.5rem', fontWeight: 600 }}>User Management Control</h3>
+          {loading ? (
+            <div className="skeleton" style={{ height: '200px', width: '100%' }}></div>
+          ) : users.length > 0 ? (
             <div style={{ overflowX: 'auto' }}>
               <table className="table-premium">
                 <thead>
@@ -116,29 +140,28 @@ export default function AdminDashboard() {
                 <tbody>
                   {users.map(u => (
                     <tr key={u.id}>
-                      <td style={{ fontWeight: 700, color: '#ffffff' }}>#{u.id}</td>
-                      <td>{u.full_name}</td>
-                      <td style={{ color: 'var(--text-tertiary)' }}>{u.email}</td>
-                      <td><span className="badge badge-green">{u.role}</span></td>
+                      <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>#{u.id}</td>
+                      <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{u.full_name}</td>
+                      <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
+                      <td><span className="badge" style={{ background: 'var(--surface-3)' }}>{u.role}</span></td>
                       <td>
                         {u.is_active !== false ? (
-                          <span style={{ color: '#34d399', fontSize: '0.8125rem', fontWeight: 700 }}>● Active</span>
+                          <span style={{ color: 'var(--success)', fontSize: '0.8125rem', fontWeight: 600 }}>Active</span>
                         ) : (
-                          <span style={{ color: '#f87171', fontSize: '0.8125rem', fontWeight: 700 }}>🚫 Frozen</span>
+                          <span style={{ color: 'var(--text-muted)', fontSize: '0.8125rem', fontWeight: 600 }}>Frozen</span>
                         )}
                       </td>
                       <td style={{ display: 'flex', gap: '0.5rem' }}>
                         <button 
                           onClick={() => handleToggleUserStatus(u.id, u.is_active !== false)} 
                           className="btn btn-secondary btn-sm"
-                          style={{ borderRadius: 'var(--radius-full)' }}
                         >
                           {u.is_active !== false ? 'Freeze' : 'Unfreeze'}
                         </button>
                         <button 
                           onClick={() => handleDeleteUser(u.id)} 
                           className="btn btn-ghost btn-sm"
-                          style={{ color: '#f87171', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 'var(--radius-full)' }}
+                          style={{ color: 'var(--danger)' }}
                         >
                           Remove
                         </button>
@@ -149,14 +172,22 @@ export default function AdminDashboard() {
               </table>
             </div>
           ) : (
-            <div style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>No user records loaded.</div>
+            <div style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem', padding: '2rem', textAlign: 'center', background: 'var(--surface)', borderRadius: 'var(--radius)' }}>No user records loaded.</div>
           )}
-        </div>
+        </motion.div>
 
         {/* Section: All Applications */}
-        <div className="glass-card" style={{ padding: '1.75rem' }}>
-          <h3 style={{ fontSize: '1.25rem', color: '#ffffff', marginBottom: '1.25rem' }}>System-Wide Applications Log</h3>
-          {applications.length > 0 ? (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="card-flat" 
+          style={{ padding: '2rem' }}
+        >
+          <h3 style={{ fontSize: '1.25rem', color: 'var(--text-primary)', marginBottom: '1.5rem', fontWeight: 600 }}>System-Wide Applications Log</h3>
+          {loading ? (
+            <div className="skeleton" style={{ height: '200px', width: '100%' }}></div>
+          ) : applications.length > 0 ? (
             <div style={{ overflowX: 'auto' }}>
               <table className="table-premium">
                 <thead>
@@ -171,16 +202,16 @@ export default function AdminDashboard() {
                 <tbody>
                   {applications.map(app => (
                     <tr key={app.id}>
-                      <td style={{ fontWeight: 700, color: '#ffffff' }}>#{app.id}</td>
-                      <td>Candidate #{app.student_id || app.id}</td>
-                      <td>Job #{app.job_id}</td>
+                      <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>#{app.id}</td>
+                      <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>Candidate #{app.student_id || app.id}</td>
+                      <td style={{ color: 'var(--text-secondary)' }}>Job #{app.job_id}</td>
                       <td><StatusBadge status={app.status} /></td>
                       <td>
                         <select 
-                          className="select"
+                          className="input"
                           value={app.status}
                           onChange={e => handleAppStatusChange(app.id, e.target.value)}
-                          style={{ width: 'auto', padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
+                          style={{ width: 'auto', padding: '0.4rem 0.75rem', fontSize: '0.8125rem', height: 'auto' }}
                         >
                           {['pending', 'reviewing', 'shortlisted', 'interview', 'rejected', 'hired'].map(s => (
                             <option key={s} value={s}>{s.toUpperCase()}</option>
@@ -193,9 +224,9 @@ export default function AdminDashboard() {
               </table>
             </div>
           ) : (
-            <div style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>No system applications found.</div>
+            <div style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem', padding: '2rem', textAlign: 'center', background: 'var(--surface)', borderRadius: 'var(--radius)' }}>No system applications found.</div>
           )}
-        </div>
+        </motion.div>
 
       </div>
     </div>

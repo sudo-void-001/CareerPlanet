@@ -135,6 +135,15 @@ const Resume = () => {
     return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+  };
+
   return (
     <div className="page hero-gradient">
       <div className="container-md">
@@ -144,34 +153,35 @@ const Resume = () => {
           <div 
             onClick={handleAvatarClick}
             style={{ 
-              width: '110px', 
-              height: '110px', 
+              width: '120px', 
+              height: '120px', 
               borderRadius: '50%', 
-              backgroundColor: 'rgba(255,255,255,0.05)', 
+              backgroundColor: 'var(--surface-2)', 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
               cursor: 'pointer',
               overflow: 'hidden',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+              boxShadow: '0 12px 40px rgba(0,0,0,0.6)',
               position: 'relative',
-              border: '3px solid rgba(16, 185, 129, 0.4)'
+              border: '4px solid var(--surface)',
+              outline: '2px solid var(--primary)'
             }}
           >
             {isUploadingAvatar && (
-              <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(7,8,12,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>
-                 <div style={{ width: '24px', height: '24px', border: '3px solid rgba(255,255,255,0.2)', borderTopColor: '#10b981', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+              <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>
+                 <div style={{ width: '28px', height: '28px', border: '3px solid rgba(255,255,255,0.2)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
               </div>
             )}
             {user?.avatar_url ? (
               <img src={`${API_BASE}${user.avatar_url}`} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
-              <span style={{ fontSize: '2.25rem', fontWeight: '800', color: '#10b981' }}>
+              <span style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--primary)' }}>
                 {getInitials(user?.name || user?.full_name)}
               </span>
             )}
           </div>
-          <p style={{ marginTop: '0.875rem', color: 'var(--text-secondary)', fontSize: '0.84375rem' }}>Click photo to update avatar</p>
+          <p style={{ marginTop: '1rem', color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>Click photo to update avatar</p>
           <input 
             type="file" 
             ref={fileInputRef} 
@@ -182,12 +192,12 @@ const Resume = () => {
         </div>
 
         {/* Main Card */}
-        <div className="glass-card" style={{ padding: '2.5rem' }}>
+        <div className="glass-card" style={{ padding: '3rem 2.5rem' }}>
           
-          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-            <span className="badge badge-green" style={{ marginBottom: '0.5rem', display: 'inline-flex' }}>✦ Deep Intelligence</span>
-            <h2 style={{ fontSize: '2.25rem', color: '#ffffff' }}>AI Resume Analysis</h2>
-            <p style={{ color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Upload your resume to get real-time ATS compatibility, skill gap breakdown, and AI tips.</p>
+          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <span className="badge badge-indigo" style={{ marginBottom: '1rem', display: 'inline-flex' }}>✦ Deep Intelligence</span>
+            <h2 style={{ fontSize: '2.5rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>AI Resume Analysis</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', maxWidth: 500, margin: '0 auto' }}>Upload your resume to get real-time ATS compatibility, skill gap breakdown, and personalized AI tips.</p>
           </div>
 
           {!analysis && (
@@ -199,36 +209,40 @@ const Resume = () => {
               onDrop={handleDrop}
               onClick={() => document.getElementById('resume-upload').click()}
               style={{
-                border: `2px dashed ${isDragging ? '#10b981' : 'rgba(255, 255, 255, 0.15)'}`,
-                backgroundColor: isDragging ? 'rgba(16, 185, 129, 0.08)' : 'rgba(13, 15, 23, 0.6)',
-                borderRadius: '20px',
-                padding: '4rem 2rem',
+                border: `2px dashed ${isDragging ? 'var(--primary)' : 'var(--border-strong)'}`,
+                backgroundColor: isDragging ? 'var(--surface-3)' : 'var(--surface-2)',
+                borderRadius: 'var(--radius-xl)',
+                padding: '5rem 2rem',
                 textAlign: 'center',
                 cursor: 'pointer',
-                transition: 'all 0.25s ease',
+                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                minHeight: '280px'
+                minHeight: '320px',
+                position: 'relative',
+                overflow: 'hidden'
               }}
             >
+              {isDragging && <div className="ambient-glow" style={{ opacity: 0.5 }} />}
+              
               {isUploadingResume ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <div style={{ width: '48px', height: '48px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: '#10b981', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '1rem' }} />
-                  <p style={{ fontWeight: '700', color: '#ffffff', fontSize: '1.1rem' }}>Extracting PDF Contents & ATS Keywords...</p>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '0.35rem' }}>Our AI models are scanning your experience</p>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 1 }}>
+                  <div style={{ width: '64px', height: '64px', border: '4px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '1.5rem' }} />
+                  <p style={{ fontWeight: '800', color: 'var(--text-primary)', fontSize: '1.25rem', marginBottom: '0.5rem' }}>Extracting PDF Contents...</p>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem' }}>Our AI models are scanning your experience & ATS keywords</p>
                 </div>
               ) : (
-                <>
-                  <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', marginBottom: '1.25rem', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                <div style={{ zIndex: 1 }}>
+                  <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'var(--surface-3)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', marginBottom: '1.5rem', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
                     📄
                   </div>
-                  <p style={{ fontSize: '1.25rem', fontWeight: '700', color: '#ffffff', marginBottom: '0.35rem' }}>
+                  <p style={{ fontSize: '1.35rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
                     {isDragging ? 'Drop your PDF here' : 'Drag & drop your resume PDF'}
                   </p>
-                  <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>or click to select from your device</p>
-                </>
+                  <p style={{ color: 'var(--text-tertiary)', fontSize: '0.9375rem' }}>or click to select from your device</p>
+                </div>
               )}
               <input 
                 id="resume-upload" 
@@ -242,95 +256,107 @@ const Resume = () => {
 
           {analysis && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border-light)' }}>
                 <div>
-                  <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ffffff' }}>Analysis Overview</h3>
-                  <p style={{ color: 'var(--text-tertiary)', fontSize: '0.84375rem', marginTop: '0.2rem' }}>Uploaded PDF: {resumeFile?.name || 'resume.pdf'}</p>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>Analysis Overview</h3>
+                  <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem', marginTop: '0.25rem' }}>Document: <strong style={{ color: 'var(--text-secondary)' }}>{resumeFile?.name || 'resume.pdf'}</strong></p>
                 </div>
                 <button 
                   onClick={() => setAnalysis(null)} 
-                  className="btn btn-secondary btn-sm"
+                  className="btn btn-secondary"
                 >
                   Upload New Version
                 </button>
               </div>
 
               {/* Score Dials */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
-                <div style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '20px', padding: '1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+                <motion.div variants={itemVariants} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderTop: '4px solid var(--success)', borderRadius: 'var(--radius-lg)', padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <p style={{ fontSize: '0.90625rem', color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>Overall Score</p>
-                    <p style={{ fontSize: '3rem', fontWeight: 800, color: '#34d399', lineHeight: 1 }}>{analysis.overallScore}<span style={{ fontSize: '1.35rem', color: 'var(--text-tertiary)' }}>/100</span></p>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Overall Score</p>
+                    <p style={{ fontSize: '3.5rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{analysis.overallScore}<span style={{ fontSize: '1.5rem', color: 'var(--text-tertiary)' }}>/100</span></p>
                   </div>
-                  <div style={{ width: '68px', height: '68px', borderRadius: '50%', border: '3px solid #10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>⚡</div>
-                </div>
+                  <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--surface-3)', border: '2px solid var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>⚡</div>
+                </motion.div>
 
-                <div style={{ background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(8, 145, 178, 0.15) 100%)', border: '1px solid rgba(6, 182, 212, 0.3)', borderRadius: '20px', padding: '1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <motion.div variants={itemVariants} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderTop: '4px solid var(--info)', borderRadius: 'var(--radius-lg)', padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <p style={{ fontSize: '0.90625rem', color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>ATS Compatibility</p>
-                    <p style={{ fontSize: '3rem', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>{analysis.atsScore}<span style={{ fontSize: '1.35rem', color: 'var(--text-tertiary)' }}>/100</span></p>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>ATS Compatibility</p>
+                    <p style={{ fontSize: '3.5rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{analysis.atsScore}<span style={{ fontSize: '1.5rem', color: 'var(--text-tertiary)' }}>/100</span></p>
                   </div>
-                  <div style={{ width: '68px', height: '68px', borderRadius: '50%', border: '3px solid #06b6d4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>🎯</div>
-                </div>
+                  <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--surface-3)', border: '2px solid var(--info)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>🎯</div>
+                </motion.div>
               </div>
 
               {/* Health progress bars */}
-              <div style={{ marginBottom: '2.5rem' }}>
-                <h4 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#ffffff', marginBottom: '1.25rem' }}>Resume Dimension Health</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
+              <motion.div variants={itemVariants} style={{ marginBottom: '3rem', background: 'var(--surface-2)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
+                <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1.5rem' }}>Resume Dimension Health</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   {Object.entries(analysis.health).map(([key, value]) => (
                     <div key={key}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-                        <span style={{ textTransform: 'capitalize', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <span style={{ textTransform: 'capitalize', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.9375rem' }}>
                           {key.replace(/([A-Z])/g, ' $1').trim()}
                         </span>
-                        <span style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.875rem' }}>{value}%</span>
+                        <span style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '0.9375rem' }}>{value}%</span>
                       </div>
-                      <div style={{ height: '8px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: '999px', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${value}%`, backgroundColor: value > 80 ? '#10b981' : value > 60 ? '#f59e0b' : '#ef4444', borderRadius: '999px', transition: 'width 1s ease' }} />
+                      <div style={{ height: '8px', backgroundColor: 'var(--surface-3)', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${value}%` }}
+                          transition={{ duration: 1, ease: 'easeOut' }}
+                          style={{ height: '100%', backgroundColor: value > 80 ? 'var(--success)' : value > 60 ? 'var(--warning)' : 'var(--danger)', borderRadius: 'var(--radius-full)' }} 
+                        />
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Strengths & Missing Skills */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
-                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem', borderRadius: 16, border: '1px solid rgba(255,255,255,0.06)' }}>
-                  <h4 style={{ fontSize: '1rem', color: '#34d399', marginBottom: '0.875rem', fontWeight: 700 }}>✅ Key Strengths</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+                <motion.div variants={itemVariants} style={{ background: 'var(--surface-2)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
+                  <h4 style={{ fontSize: '1.1rem', color: 'var(--success)', marginBottom: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '1.25rem' }}>✅</span> Key Strengths
+                  </h4>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     {analysis.strengths.map((s, i) => (
                       <span key={i} className="badge badge-green">{s}</span>
                     ))}
                   </div>
-                </div>
+                </motion.div>
 
-                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem', borderRadius: 16, border: '1px solid rgba(255,255,255,0.06)' }}>
-                  <h4 style={{ fontSize: '1rem', color: '#fbbf24', marginBottom: '0.875rem', fontWeight: 700 }}>⚠️ Missing Recommended Skills</h4>
+                <motion.div variants={itemVariants} style={{ background: 'var(--surface-2)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
+                  <h4 style={{ fontSize: '1.1rem', color: 'var(--warning)', marginBottom: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '1.25rem' }}>⚠️</span> Missing Recommended Skills
+                  </h4>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     {analysis.missingSkills.map((s, i) => (
                       <span key={i} className="badge badge-amber">{s}</span>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               </div>
 
               {/* Recommendations */}
-              <div style={{ background: 'rgba(16, 185, 129, 0.05)', padding: '1.5rem', borderRadius: 18, border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-                <h4 style={{ fontSize: '1.1rem', color: '#ffffff', marginBottom: '1rem', fontWeight: 700 }}>💡 AI Recommendations</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <motion.div variants={itemVariants} style={{ background: 'rgba(99, 102, 241, 0.05)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
+                <h4 style={{ fontSize: '1.25rem', color: 'var(--text-primary)', marginBottom: '1.5rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span style={{ background: 'var(--primary)', color: '#000', width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>💡</span>
+                  AI Recommendations
+                </h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {analysis.recommendations.map((rec, i) => (
-                    <div key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
-                      <span style={{ background: '#10b981', color: '#000', width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.75rem', flexShrink: 0, marginTop: '0.1rem' }}>{i + 1}</span>
-                      <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{rec}</span>
+                    <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', background: 'var(--surface-2)', padding: '1rem 1.25rem', borderRadius: 'var(--radius)' }}>
+                      <span style={{ color: 'var(--text-tertiary)', fontWeight: 800, fontSize: '0.875rem', marginTop: '0.1rem' }}>0{i + 1}</span>
+                      <span style={{ fontSize: '0.9375rem', color: 'var(--text-primary)', lineHeight: 1.6 }}>{rec}</span>
                     </div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
             </motion.div>
           )}

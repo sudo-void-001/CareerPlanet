@@ -12,7 +12,7 @@ export function CompanyLogo({ name, size = 44 }) {
     'D': 'linear-gradient(135deg, #86bc25, #6b971e)',
     'N': 'linear-gradient(135deg, #e50914, #b20710)',
   };
-  const bg = colors[letter] || 'linear-gradient(135deg, #10b981, #06b6d4)';
+  const bg = colors[letter] || 'var(--surface-3)';
   return (
     <div className="company-logo" style={{ 
       width: size, 
@@ -63,13 +63,10 @@ export function SkillChip({ skill }) {
 
 export function LoadingState({ message = 'Loading...' }) {
   return (
-    <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.25rem' }}>
-      <div className="pulse-glow" style={{
-        width: 52, height: 52, borderRadius: '50%',
-        background: 'linear-gradient(135deg, #10b981, #06b6d4)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontSize: '1.4rem', fontWeight: 800
-      }}>✦</div>
-      <p style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.95rem' }}>{message}</p>
+    <div style={{ minHeight: '50vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.5rem' }}>
+      <div className="skeleton" style={{ width: 64, height: 64, borderRadius: '50%', marginBottom: '1rem' }} />
+      <div className="skeleton" style={{ width: 200, height: 24, borderRadius: 'var(--radius-sm)' }} />
+      <p style={{ color: 'var(--text-tertiary)', fontWeight: 500, fontSize: '0.875rem' }}>{message}</p>
     </div>
   );
 }
@@ -78,15 +75,18 @@ export function EmptyState({ icon = '📭', title, description, actionLabel, act
   return (
     <div style={{ 
       textAlign: 'center', 
-      padding: '4rem 2rem',
-      background: 'rgba(19, 21, 31, 0.4)',
+      padding: '5rem 2rem',
+      background: 'var(--surface-2)',
       borderRadius: 'var(--radius-xl)',
-      border: '1px dashed var(--border)',
-      margin: '2rem 0'
+      border: '1px dashed var(--border-strong)',
+      margin: '2rem 0',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
     }}>
-      <div style={{ fontSize: '3.5rem', marginBottom: '1rem', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))' }}>{icon}</div>
-      <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem', fontSize: '1.35rem' }}>{title}</h3>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '1.75rem', maxWidth: '420px', margin: '0 auto 1.75rem' }}>{description}</p>
+      <div style={{ fontSize: '3.5rem', marginBottom: '1.5rem', filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.4))' }}>{icon}</div>
+      <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.75rem', fontSize: '1.25rem' }}>{title}</h3>
+      <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', maxWidth: '400px', margin: '0 auto 2rem', fontSize: '0.9375rem' }}>{description}</p>
       {actionLabel && actionHref && (
         <Link to={actionHref} className="btn btn-primary">{actionLabel}</Link>
       )}

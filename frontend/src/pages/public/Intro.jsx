@@ -111,13 +111,13 @@ export default function Intro() {
                     height: 400,
                     borderRadius: 24,
                     overflow: 'hidden',
-                    border: '2px solid var(--primary)',
-                    boxShadow: 'var(--shadow-glow), inset 0 0 20px var(--primary-light)',
-                    background: 'rgba(10, 15, 28, 0.85)',
+                    border: '1px solid var(--border-light)',
+                    boxShadow: 'var(--shadow-glow), inset 0 0 20px rgba(255,255,255,0.05)',
+                    background: 'var(--surface-2)',
                     transition: 'border-color 0.4s ease, box-shadow 0.4s ease'
                   }}>
                     <img 
-                      src="/recruiter.jpg" 
+                      src="/cinematic-recruiter.jpg" 
                       alt="Recruiter Hiring Partner" 
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
@@ -362,15 +362,15 @@ export default function Intro() {
                       onClick={handleExplore}
                       className="btn btn-primary btn-lg"
                       style={{
-                        borderRadius: 'var(--radius-full)',
-                        padding: '1.05rem 2.85rem',
-                        fontSize: '1.1rem',
-                        fontWeight: 800,
-                        letterSpacing: '-0.01em'
+                        borderRadius: 'var(--radius-sm)',
+                        padding: '0.875rem 2.5rem',
+                        fontSize: '0.9375rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.02em'
                       }}
                     >
                       <span>Explore Platform</span>
-                      <span style={{ fontSize: '1.25rem' }}>→</span>
+                      <span style={{ fontSize: '1rem' }}>→</span>
                     </motion.button>
                   </motion.div>
 
@@ -396,13 +396,13 @@ export default function Intro() {
                     height: 400,
                     borderRadius: 24,
                     overflow: 'hidden',
-                    border: '2px solid var(--primary)',
-                    boxShadow: 'var(--shadow-glow), inset 0 0 20px var(--primary-light)',
-                    background: 'rgba(10, 15, 28, 0.85)',
+                    border: '1px solid var(--border-light)',
+                    boxShadow: 'var(--shadow-glow), inset 0 0 20px rgba(255,255,255,0.05)',
+                    background: 'var(--surface-2)',
                     transition: 'border-color 0.4s ease, box-shadow 0.4s ease'
                   }}>
                     <img 
-                      src="/student.jpg" 
+                      src="/cinematic-student.jpg" 
                       alt="Student Candidate" 
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />

@@ -43,27 +43,27 @@ function PostJobModal({ onClose, onSuccess, companyName }) {
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        style={{ position: 'fixed', inset: 0, background: 'rgba(7, 8, 12, 0.8)', backdropFilter: 'blur(12px)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
         onClick={onClose}
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.2 }}
           onClick={e => e.stopPropagation()}
-          style={{ background: '#13151f', borderRadius: 24, width: '100%', maxWidth: 520, maxHeight: '90vh', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 30px 80px rgba(0,0,0,0.8)' }}
+          style={{ background: 'var(--surface)', borderRadius: 20, width: '100%', maxWidth: 540, maxHeight: '90vh', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'var(--shadow-xl)' }}
         >
-          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)' }}>
+          <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg)' }}>
             <div>
-              <h3 style={{ margin: 0, color: '#ffffff' }}>Post a New Job</h3>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.125rem' }}>Posted as {companyName}</div>
+              <h3 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.25rem' }}>Post a New Job</h3>
+              <div style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', marginTop: '0.25rem' }}>Posted as {companyName}</div>
             </div>
-            <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', borderRadius: '50%', width: 28, height: 28 }}>✕</button>
+            <button onClick={onClose} className="btn-ghost" style={{ borderRadius: '50%', width: 32, height: 32, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
           </div>
 
-          <form onSubmit={handleSubmit} style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', overflowY: 'auto', maxHeight: 'calc(90vh - 80px)' }}>
-            {error && <div style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.75rem', borderRadius: 12, fontSize: '0.85rem' }}>{error}</div>}
+          <form onSubmit={handleSubmit} style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', overflowY: 'auto', maxHeight: 'calc(90vh - 85px)' }}>
+            {error && <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '0.875rem', borderRadius: 12, fontSize: '0.875rem' }}>{error}</div>}
 
             <div>
               <label className="label">Job Title *</label>
@@ -75,14 +75,14 @@ function PostJobModal({ onClose, onSuccess, companyName }) {
               <input className="input" required value={form.company_name} onChange={e => setForm({ ...form, company_name: e.target.value })} placeholder="Your company name" />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
               <div>
                 <label className="label">Location *</label>
                 <input className="input" required value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} placeholder="Mumbai / Remote" />
               </div>
               <div>
                 <label className="label">Job Type *</label>
-                <select className="select" value={form.job_type} onChange={e => setForm({ ...form, job_type: e.target.value })}>
+                <select className="input" value={form.job_type} onChange={e => setForm({ ...form, job_type: e.target.value })} style={{ paddingRight: '2rem' }}>
                   <option>Full Time</option>
                   <option>Part Time</option>
                   <option>Internship</option>
@@ -92,7 +92,7 @@ function PostJobModal({ onClose, onSuccess, companyName }) {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
               <div>
                 <label className="label">Salary (Optional)</label>
                 <input className="input" value={form.salary} onChange={e => setForm({ ...form, salary: e.target.value })} placeholder="₹15 LPA / $90k" />
@@ -104,18 +104,18 @@ function PostJobModal({ onClose, onSuccess, companyName }) {
             </div>
 
             <div>
-              <label className="label">Required Skills (comma separated)</label>
+              <label className="label">Required Skills</label>
               <input className="input" value={form.skills} onChange={e => setForm({ ...form, skills: e.target.value })} placeholder="React, Node.js, Python, PostgreSQL" />
             </div>
 
             <div>
               <label className="label">Job Description *</label>
-              <textarea className="input" rows={4} required value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Responsibilities, qualifications, culture..." style={{ resize: 'vertical' }} />
+              <textarea className="input" rows={5} required value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Responsibilities, qualifications, culture..." style={{ resize: 'vertical' }} />
             </div>
 
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
-              <button type="button" onClick={onClose} className="btn btn-secondary" style={{ flex: 1, borderRadius: 14 }}>Cancel</button>
-              <button type="submit" disabled={submitting} className="btn btn-primary" style={{ flex: 1, borderRadius: 14 }}>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
+              <button type="button" onClick={onClose} className="btn btn-secondary" style={{ flex: 1, padding: '0.875rem' }}>Cancel</button>
+              <button type="submit" disabled={submitting} className="btn btn-primary" style={{ flex: 1, padding: '0.875rem' }}>
                 {submitting ? 'Posting...' : 'Publish Job Opening'}
               </button>
             </div>
@@ -169,40 +169,40 @@ function AppDetailModal({ app, job, onClose, onStatusChange, onSendMessage }) {
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        style={{ position: 'fixed', inset: 0, background: 'rgba(7, 8, 12, 0.8)', backdropFilter: 'blur(12px)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
         onClick={onClose}
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.2 }}
           onClick={e => e.stopPropagation()}
-          style={{ background: '#13151f', borderRadius: 24, width: '100%', maxWidth: 580, maxHeight: '90vh', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 30px 80px rgba(0,0,0,0.8)' }}
+          style={{ background: 'var(--surface)', borderRadius: 20, width: '100%', maxWidth: 600, maxHeight: '90vh', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'var(--shadow-xl)' }}
         >
-          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg)' }}>
             <div>
-              <h3 style={{ margin: 0, color: '#ffffff' }}>Applicant Overview</h3>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.125rem' }}>Application #{app.id}</div>
+              <h3 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.25rem' }}>Applicant Overview</h3>
+              <div style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', marginTop: '0.25rem' }}>Application #{app.id}</div>
             </div>
-            <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', borderRadius: '50%', width: 28, height: 28 }}>✕</button>
+            <button onClick={onClose} className="btn-ghost" style={{ borderRadius: '50%', width: 32, height: 32, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
           </div>
 
-          <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', overflowY: 'auto', maxHeight: 'calc(90vh - 80px)' }}>
+          <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', overflowY: 'auto', maxHeight: 'calc(90vh - 85px)' }}>
             
             {/* Status update bar */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-2)', padding: '1.25rem', borderRadius: 16, border: '1px solid var(--border)' }}>
               <div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 700, textTransform: 'uppercase' }}>Current Pipeline Status</div>
-                <div style={{ marginTop: '0.25rem' }}><StatusBadge status={currentStatus} /></div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pipeline Status</div>
+                <div style={{ marginTop: '0.5rem' }}><StatusBadge status={currentStatus} /></div>
               </div>
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                 <select 
-                  className="select"
+                  className="input"
                   value={currentStatus} 
                   onChange={e => handleStatusUpdate(e.target.value)}
                   disabled={updatingStatus}
-                  style={{ width: 'auto', padding: '0.5rem 0.85rem', fontSize: '0.8125rem' }}
+                  style={{ width: 'auto', padding: '0.5rem 2rem 0.5rem 1rem', height: 'auto' }}
                 >
                   {statusOptions.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
                 </select>
@@ -211,48 +211,53 @@ function AppDetailModal({ app, job, onClose, onStatusChange, onSendMessage }) {
 
             {/* Applicant Details */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <div className="glass-card" style={{ padding: '1rem' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 700 }}>Applicant Info</div>
-                <div style={{ fontWeight: 700, color: '#ffffff', marginTop: '0.25rem', fontSize: '0.95rem' }}>Student Candidate</div>
-                <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>Applicant ID: #{app.student_id || app.id}</div>
+              <div className="card-flat" style={{ padding: '1.25rem' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' }}>Applicant Info</div>
+                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.5rem', fontSize: '1rem' }}>Student Candidate</div>
+                <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Applicant ID: #{app.student_id || app.id}</div>
               </div>
 
-              <div className="glass-card" style={{ padding: '1rem' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 700 }}>Target Role</div>
-                <div style={{ fontWeight: 700, color: '#ffffff', marginTop: '0.25rem', fontSize: '0.95rem' }}>{job.title || 'Role'}</div>
-                <div style={{ fontSize: '0.8125rem', color: '#34d399' }}>{job.salary || 'Standard Comp'}</div>
+              <div className="card-flat" style={{ padding: '1.25rem' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' }}>Target Role</div>
+                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.5rem', fontSize: '1rem' }}>{job.title || 'Role'}</div>
+                <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{job.salary || 'Standard Comp'}</div>
               </div>
             </div>
 
             {/* Cover Letter Section */}
             {app.cover_letter ? (
-              <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '1.25rem', borderRadius: 16 }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#34d399', marginBottom: '0.5rem', textTransform: 'uppercase' }}>✍️ Candidate Pitch / Cover Letter</div>
-                <p style={{ margin: 0, fontSize: '0.875rem', color: '#f8fafc', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{app.cover_letter}</p>
+              <div style={{ background: 'var(--surface-3)', border: '1px solid var(--border)', padding: '1.5rem', borderRadius: 16 }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Candidate Pitch / Cover Letter</div>
+                <p style={{ margin: 0, fontSize: '0.9375rem', color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{app.cover_letter}</p>
               </div>
             ) : (
-              <div style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', fontStyle: 'italic' }}>No custom cover letter attached by applicant.</div>
+              <div style={{ padding: '2rem', textAlign: 'center', background: 'var(--surface-2)', borderRadius: 16, border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic' }}>No custom cover letter attached by applicant.</div>
+              </div>
             )}
 
             {/* Send Custom Letter Form */}
-            <form onSubmit={handleSendCustomMessage} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.25rem' }}>
-              <label className="label">Send Custom Email Pitch / Message to Candidate</label>
-              {msgSentSuccess && <div style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', padding: '0.5rem 0.75rem', borderRadius: 10, fontSize: '0.8125rem' }}>✓ Message dispatched to candidate email via Resend!</div>}
-              <textarea 
-                rows={3}
-                value={customMsg}
-                onChange={e => setCustomMsg(e.target.value)}
-                placeholder="Write a custom letter or update (e.g. We loved your profile! Let's schedule an interview...)"
-                className="input"
-                style={{ resize: 'vertical' }}
-              />
+            <form onSubmit={handleSendCustomMessage} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
+              <div>
+                <label className="label">Send Custom Message to Candidate</label>
+                <p style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', marginBottom: '0.75rem' }}>This will be delivered to the candidate's inbox.</p>
+                {msgSentSuccess && <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', padding: '0.75rem 1rem', borderRadius: 8, fontSize: '0.875rem', marginBottom: '1rem', border: '1px solid rgba(16, 185, 129, 0.2)' }}>✓ Message dispatched successfully!</div>}
+                <textarea 
+                  rows={4}
+                  value={customMsg}
+                  onChange={e => setCustomMsg(e.target.value)}
+                  placeholder="e.g. We loved your profile! Let's schedule an interview..."
+                  className="input"
+                  style={{ resize: 'vertical' }}
+                />
+              </div>
               <button 
                 type="submit" 
                 disabled={sendingMsg || !customMsg.trim()}
                 className="btn btn-primary"
-                style={{ alignSelf: 'flex-end', borderRadius: 12, padding: '0.6rem 1.25rem' }}
+                style={{ alignSelf: 'flex-end' }}
               >
-                {sendingMsg ? 'Dispatching Email...' : 'Send Custom Email →'}
+                {sendingMsg ? 'Dispatching...' : 'Send Message'}
               </button>
             </form>
 
@@ -311,163 +316,198 @@ export default function RecruiterDashboard() {
   };
 
   return (
-    <div className="page hero-gradient">
+    <div className="page" style={{ background: 'var(--bg)' }}>
       <div className="container">
         
         {/* Header Bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '3rem' }}
+        >
           <div>
-            <span className="badge badge-green" style={{ marginBottom: '0.5rem', display: 'inline-flex' }}>🏢 Recruiter Portal</span>
-            <h1 style={{ fontSize: '2.5rem', margin: 0 }}>Hiring Command Center</h1>
-            <p style={{ color: 'var(--text-secondary)', marginTop: '0.2rem' }}>Managing recruitment pipelines for <strong style={{ color: '#ffffff' }}>{companyName}</strong>.</p>
+            <span className="badge" style={{ marginBottom: '1rem', background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)' }}>🏢 Recruiter Portal</span>
+            <h1 style={{ fontSize: '3rem', margin: 0, letterSpacing: '-0.04em' }}>Hiring Command Center</h1>
+            <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem', fontSize: '1.125rem' }}>Managing recruitment pipelines for <strong style={{ color: 'var(--text-primary)' }}>{companyName}</strong>.</p>
           </div>
-          <button onClick={() => setShowPostModal(true)} className="btn btn-primary btn-lg" style={{ borderRadius: 14 }}>
-            + Post New Opening
+          <button onClick={() => setShowPostModal(true)} className="btn btn-primary btn-lg" style={{ padding: '1rem 2rem', fontWeight: 600 }}>
+            Post New Opening
           </button>
-        </div>
+        </motion.div>
 
         {/* Navigation Tabs */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2.5rem', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem' }}>
           {TABS.map(t => (
             <button
               key={t.id}
               onClick={() => setActiveTab(t.id)}
               className="btn"
               style={{
-                background: activeTab === t.id ? 'rgba(16, 185, 129, 0.15)' : 'transparent',
-                color: activeTab === t.id ? '#34d399' : 'var(--text-secondary)',
-                border: activeTab === t.id ? '1px solid rgba(16, 185, 129, 0.3)' : 'none',
-                borderRadius: 'var(--radius-full)'
+                background: activeTab === t.id ? 'var(--text-primary)' : 'transparent',
+                color: activeTab === t.id ? 'var(--bg)' : 'var(--text-secondary)',
+                border: 'none',
+                borderRadius: '100px',
+                padding: '0.5rem 1.25rem',
+                fontWeight: activeTab === t.id ? 600 : 500
               }}
             >
-              <span>{t.icon}</span>
-              <span>{t.label}</span>
+              <span style={{ marginRight: '0.25rem' }}>{t.icon}</span>
+              {t.label}
             </button>
           ))}
         </div>
 
-        {/* OVERVIEW TAB */}
-        {activeTab === 'overview' && (
-          <div>
-            {/* Stats Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '3rem' }}>
-              <div className="glass-card" style={{ padding: '1.5rem' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Active Job Posts</div>
-                <div style={{ fontSize: '2.25rem', fontWeight: 800, color: '#38bdf8', marginTop: '0.25rem' }}>{stats.totalJobs}</div>
-              </div>
-              <div className="glass-card" style={{ padding: '1.5rem' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Total Received Apps</div>
-                <div style={{ fontSize: '2.25rem', fontWeight: 800, color: '#fbbf24', marginTop: '0.25rem' }}>{stats.totalApps}</div>
-              </div>
-              <div className="glass-card" style={{ padding: '1.5rem' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Shortlisted Candidates</div>
-                <div style={{ fontSize: '2.25rem', fontWeight: 800, color: '#34d399', marginTop: '0.25rem' }}>{stats.shortlisted}</div>
-              </div>
-              <div className="glass-card" style={{ padding: '1.5rem' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Offers Extended</div>
-                <div style={{ fontSize: '2.25rem', fontWeight: 800, color: '#c084fc', marginTop: '0.25rem' }}>{stats.hired}</div>
-              </div>
-            </div>
-
-            {/* Recent Applicants list */}
-            <div className="glass-card" style={{ padding: '1.75rem' }}>
-              <h3 style={{ fontSize: '1.25rem', color: '#ffffff', marginBottom: '1.25rem' }}>Recent Candidate Submissions</h3>
-              {applications.length > 0 ? (
-                <div style={{ overflowX: 'auto' }}>
-                  <table className="table-premium">
-                    <thead>
-                      <tr>
-                        <th>Applicant ID</th>
-                        <th>Job ID</th>
-                        <th>Status</th>
-                        <th>Pitch</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {applications.slice(0, 5).map(app => (
-                        <tr key={app.id}>
-                          <td style={{ fontWeight: 700, color: '#ffffff' }}>#{app.student_id || app.id}</td>
-                          <td>Job #{app.job_id}</td>
-                          <td><StatusBadge status={app.status} /></td>
-                          <td>{app.cover_letter ? '✍️ Yes' : '—'}</td>
-                          <td>
-                            <button onClick={() => setSelectedApp(app)} className="btn btn-secondary btn-sm" style={{ borderRadius: 'var(--radius-full)' }}>
-                              Review Pitch
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>No candidate submissions recorded yet.</div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* MY JOBS TAB */}
-        {activeTab === 'jobs' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
-            {jobs.map(job => (
-              <div key={job.id} className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                    <h3 style={{ fontSize: '1.15rem', color: '#ffffff' }}>{job.title}</h3>
-                    <span className="badge badge-green">{job.job_type}</span>
-                  </div>
-                  <div style={{ fontSize: '0.84375rem', color: 'var(--text-tertiary)', marginBottom: '1rem' }}>{job.location} • {job.salary || 'Standard Comp'}</div>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1.25rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{job.description}</p>
-                </div>
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '0.875rem', fontSize: '0.8125rem', color: 'var(--text-tertiary)' }}>
-                  Posted by {job.company_name || companyName}
-                </div>
-              </div>
+        {loading ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="stat-card skeleton" style={{ height: '120px' }}></div>
             ))}
           </div>
-        )}
+        ) : (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              {/* OVERVIEW TAB */}
+              {activeTab === 'overview' && (
+                <div>
+                  {/* Stats Cards */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
+                    <div className="stat-card">
+                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Active Job Posts</div>
+                      <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.5rem', letterSpacing: '-0.03em' }}>{stats.totalJobs}</div>
+                    </div>
+                    <div className="stat-card">
+                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Received Apps</div>
+                      <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.5rem', letterSpacing: '-0.03em' }}>{stats.totalApps}</div>
+                    </div>
+                    <div className="stat-card">
+                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Shortlisted Candidates</div>
+                      <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.5rem', letterSpacing: '-0.03em' }}>{stats.shortlisted}</div>
+                    </div>
+                    <div className="stat-card">
+                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Offers Extended</div>
+                      <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.5rem', letterSpacing: '-0.03em' }}>{stats.hired}</div>
+                    </div>
+                  </div>
 
-        {/* APPLICATIONS TAB */}
-        {activeTab === 'applications' && (
-          <div className="glass-card" style={{ padding: '1.75rem' }}>
-            <h3 style={{ fontSize: '1.25rem', color: '#ffffff', marginBottom: '1.25rem' }}>All Role Applications</h3>
-            {applications.length > 0 ? (
-              <div style={{ overflowX: 'auto' }}>
-                <table className="table-premium">
-                  <thead>
-                    <tr>
-                      <th>App ID</th>
-                      <th>Candidate</th>
-                      <th>Job ID</th>
-                      <th>Cover Letter</th>
-                      <th>Pipeline Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {applications.map(app => (
-                      <tr key={app.id}>
-                        <td style={{ fontWeight: 700, color: '#ffffff' }}>#{app.id}</td>
-                        <td>Candidate #{app.student_id || app.id}</td>
-                        <td>Job #{app.job_id}</td>
-                        <td>{app.cover_letter ? '✍️ Pitch Attached' : '—'}</td>
-                        <td><StatusBadge status={app.status} /></td>
-                        <td>
-                          <button onClick={() => setSelectedApp(app)} className="btn btn-secondary btn-sm" style={{ borderRadius: 'var(--radius-full)' }}>
-                            Inspect & Pitch
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>No applications recorded yet.</div>
-            )}
-          </div>
+                  {/* Recent Applicants list */}
+                  <div className="card-flat" style={{ padding: '2rem' }}>
+                    <h3 style={{ fontSize: '1.25rem', color: 'var(--text-primary)', marginBottom: '1.5rem', fontWeight: 600 }}>Recent Candidate Submissions</h3>
+                    {applications.length > 0 ? (
+                      <div style={{ overflowX: 'auto' }}>
+                        <table className="table-premium">
+                          <thead>
+                            <tr>
+                              <th>Applicant ID</th>
+                              <th>Job ID</th>
+                              <th>Status</th>
+                              <th>Pitch</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {applications.slice(0, 5).map(app => (
+                              <tr key={app.id}>
+                                <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>#{app.student_id || app.id}</td>
+                                <td>Job #{app.job_id}</td>
+                                <td><StatusBadge status={app.status} /></td>
+                                <td>{app.cover_letter ? '✍️ Yes' : '—'}</td>
+                                <td>
+                                  <button onClick={() => setSelectedApp(app)} className="btn btn-secondary btn-sm">
+                                    Review Pitch
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div style={{ padding: '3rem', textAlign: 'center', background: 'var(--surface)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+                        <div style={{ color: 'var(--text-tertiary)', fontSize: '0.9375rem' }}>No candidate submissions recorded yet.</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* MY JOBS TAB */}
+              {activeTab === 'jobs' && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1.5rem' }}>
+                  {jobs.length > 0 ? jobs.map(job => (
+                    <div key={job.id} className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', marginBottom: '1rem' }}>
+                          <h3 style={{ fontSize: '1.25rem', color: 'var(--text-primary)', margin: 0, lineHeight: 1.3 }}>{job.title}</h3>
+                          <span className="badge" style={{ background: 'var(--surface-3)' }}>{job.job_type}</span>
+                        </div>
+                        <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', marginBottom: '1.25rem', fontWeight: 500 }}>{job.location} • {job.salary || 'Standard Comp'}</div>
+                        <p style={{ fontSize: '0.9375rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '2rem', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{job.description}</p>
+                      </div>
+                      <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                          Posted by {job.company_name || companyName}
+                        </div>
+                      </div>
+                    </div>
+                  )) : (
+                    <div style={{ gridColumn: '1 / -1', padding: '4rem', textAlign: 'center', background: 'var(--surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
+                      <div style={{ fontSize: '1.125rem', color: 'var(--text-secondary)' }}>You haven't posted any jobs yet.</div>
+                      <button onClick={() => setShowPostModal(true)} className="btn btn-primary" style={{ marginTop: '1.5rem' }}>Create Your First Job</button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* APPLICATIONS TAB */}
+              {activeTab === 'applications' && (
+                <div className="card-flat" style={{ padding: '2rem' }}>
+                  <h3 style={{ fontSize: '1.25rem', color: 'var(--text-primary)', marginBottom: '1.5rem', fontWeight: 600 }}>All Role Applications</h3>
+                  {applications.length > 0 ? (
+                    <div style={{ overflowX: 'auto' }}>
+                      <table className="table-premium">
+                        <thead>
+                          <tr>
+                            <th>App ID</th>
+                            <th>Candidate</th>
+                            <th>Job ID</th>
+                            <th>Cover Letter</th>
+                            <th>Pipeline Status</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {applications.map(app => (
+                            <tr key={app.id}>
+                              <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>#{app.id}</td>
+                              <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>Candidate #{app.student_id || app.id}</td>
+                              <td style={{ color: 'var(--text-secondary)' }}>Job #{app.job_id}</td>
+                              <td>{app.cover_letter ? '✍️ Pitch Attached' : '—'}</td>
+                              <td><StatusBadge status={app.status} /></td>
+                              <td>
+                                <button onClick={() => setSelectedApp(app)} className="btn btn-secondary btn-sm">
+                                  Inspect & Pitch
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div style={{ padding: '4rem', textAlign: 'center', background: 'var(--surface)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+                      <div style={{ color: 'var(--text-tertiary)', fontSize: '1rem' }}>No applications recorded yet.</div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         )}
 
       </div>
