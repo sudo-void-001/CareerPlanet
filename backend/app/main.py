@@ -13,12 +13,31 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Career Planet API", version="1.0.0", docs_url="/docs")
 
 # Dynamic CORS configuration for local development and Render/Vercel production
+from urllib.parse import urlparse
+
 origins_env = os.getenv("ALLOWED_ORIGINS", "*")
 if origins_env.strip() == "*":
     ALLOWED_ORIGINS = ["*"]
     allow_creds = False
 else:
-    ALLOWED_ORIGINS = [o.strip() for o in origins_env.split(",") if o.strip()]
+    raw_origins = [o.strip() for o in origins_env.split(",") if o.strip()]
+    ALLOWED_ORIGINS = []
+    for origin in raw_origins:
+        if origin == "*":
+            ALLOWED_ORIGINS.append("*")
+            continue
+        # Standardize origin to scheme://netloc (no trailing slashes or subpaths like /api)
+        parsed = urlparse(origin)
+        if parsed.scheme and parsed.netloc:
+            ALLOWED_ORIGINS.append(f"{parsed.scheme}://{parsed.netloc}")
+        else:
+            # Fallback string manipulation
+            clean = origin.rstrip("/")
+            if "/api" in clean:
+                clean = clean.split("/api")[0]
+            ALLOWED_ORIGINS.append(clean)
+    
+    ALLOWED_ORIGINS = list(set(ALLOWED_ORIGINS))
     allow_creds = True
 
 app.add_middleware(
