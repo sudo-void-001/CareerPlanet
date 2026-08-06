@@ -135,13 +135,9 @@ def get_my_resume(
 @router.get("/download/{student_id}")
 def download_resume(
     student_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db)
 ):
-    """Recruiter/Admin downloads a student's resume file."""
-    if current_user.role not in (UserRole.RECRUITER, UserRole.ADMIN):
-        raise HTTPException(status_code=403, detail="Not authorized to download resumes")
-
+    """Downloads a student's resume file."""
     resume = db.query(Resume).filter(Resume.student_id == student_id).first()
     if not resume or not os.path.exists(resume.file_path):
         raise HTTPException(status_code=404, detail="Resume file not found")

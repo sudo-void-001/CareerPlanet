@@ -102,9 +102,13 @@ def send_application_email(
     missing_skills: str,
     recommendations: str,
     cover_letter: str = None,
-    backend_base_url: str = "http://localhost:8000"
+    backend_base_url: str = None
 ) -> bool:
     """Send professional application notification email to recruiter."""
+    if not backend_base_url:
+        backend_base_url = os.getenv("BACKEND_URL") or os.getenv("RENDER_EXTERNAL_URL") or "http://localhost:8000"
+        # Ensure no trailing slash
+        backend_base_url = backend_base_url.rstrip("/")
     
     score_color = "#10b981" if match_score >= 80 else "#f59e0b" if match_score >= 60 else "#ef4444"
     score_label = "Excellent Match" if match_score >= 80 else "Good Match" if match_score >= 60 else "Needs Review"
