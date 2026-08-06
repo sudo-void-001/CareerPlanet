@@ -10,6 +10,28 @@ load_dotenv()
 # Create all database tables automatically
 Base.metadata.create_all(bind=engine)
 
+# Auto-seed the database with demo data if it is empty
+from app.core.database import SessionLocal
+from app.models.user import User
+db = SessionLocal()
+try:
+    if not db.query(User).first():
+        print("Database is empty. Auto-seeding default demo accounts...")
+        try:
+            from seed import seed_db
+            seed_db()
+        except ImportError:
+            import sys
+            # Main is in app/main.py, seed is in parent directory
+            parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            sys.path.append(parent_dir)
+            from seed import seed_db
+            seed_db()
+except Exception as e:
+    print(f"Auto-seeding check failed: {e}")
+finally:
+    db.close()
+
 app = FastAPI(title="Career Planet API", version="1.0.0", docs_url="/docs")
 
 # Dynamic CORS configuration for local development and Render/Vercel production
