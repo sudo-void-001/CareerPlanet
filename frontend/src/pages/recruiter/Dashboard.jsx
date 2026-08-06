@@ -134,6 +134,26 @@ function AppDetailModal({ app, job, onClose, onStatusChange, onSendMessage }) {
   const [sendingMsg, setSendingMsg] = useState(false);
   const [msgSentSuccess, setMsgSentSuccess] = useState(false);
 
+  const [detail, setDetail] = useState(null);
+  const [loadingDetail, setLoadingDetail] = useState(true);
+
+  const API_HOST = api.defaults.baseURL.replace('/api', '');
+
+  useEffect(() => {
+    const fetchDetail = async () => {
+      setLoadingDetail(true);
+      try {
+        const res = await api.get(`/applications/${app.id}/detail`);
+        setDetail(res.data);
+      } catch (err) {
+        console.error('Error fetching application detail:', err);
+      } finally {
+        setLoadingDetail(false);
+      }
+    };
+    fetchDetail();
+  }, [app.id]);
+
   const handleStatusUpdate = async (newStatus) => {
     setUpdatingStatus(true);
     try {
@@ -147,19 +167,23 @@ function AppDetailModal({ app, job, onClose, onStatusChange, onSendMessage }) {
     }
   };
 
-  const handleSendCustomMessage = async (e) => {
-    e.preventDefault();
-    if (!customMsg.trim()) return;
+  const handleSendCustomResponse = async (type) => {
+    if (!customMsg.trim() || sendingMsg) return;
     setSendingMsg(true);
     setMsgSentSuccess(false);
     try {
-      await api.post(`/applications/${app.id}/message`, { message: customMsg });
+      // The backend accepts recruiter_message inside the status PUT body
+      await api.put(`/applications/${app.id}/status`, { 
+        status: currentStatus,
+        recruiter_message: customMsg 
+      });
       setMsgSentSuccess(true);
       if (onSendMessage) onSendMessage(app.id, customMsg);
       setCustomMsg('');
       setTimeout(() => setMsgSentSuccess(false), 4000);
     } catch (err) {
-      alert('Failed to send recruiter email message.');
+      console.error(err);
+      alert('Failed to send recruiter response.');
     } finally {
       setSendingMsg(false);
     }
@@ -178,7 +202,7 @@ function AppDetailModal({ app, job, onClose, onStatusChange, onSendMessage }) {
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.2 }}
           onClick={e => e.stopPropagation()}
-          style={{ background: 'var(--surface)', borderRadius: 20, width: '100%', maxWidth: 600, maxHeight: '90vh', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'var(--shadow-xl)' }}
+          style={{ background: 'var(--surface)', borderRadius: 20, width: '100%', maxWidth: 640, maxHeight: '90vh', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'var(--shadow-xl)' }}
         >
           <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg)' }}>
             <div>
@@ -213,8 +237,12 @@ function AppDetailModal({ app, job, onClose, onStatusChange, onSendMessage }) {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div className="card-flat" style={{ padding: '1.25rem' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' }}>Applicant Info</div>
-                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.5rem', fontSize: '1rem' }}>Student Candidate</div>
-                <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Applicant ID: #{app.student_id || app.id}</div>
+                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.5rem', fontSize: '1rem' }}>
+                  {loadingDetail ? <div className="skeleton" style={{ height: '1.25rem', width: '120px' }}></div> : (detail?.student?.name || 'Student Candidate')}
+                </div>
+                <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                  {loadingDetail ? <div className="skeleton" style={{ height: '1rem', width: '160px', marginTop: '0.25rem' }}></div> : (detail?.student?.email || `Applicant ID: #${app.student_id}`)}
+                </div>
               </div>
 
               <div className="card-flat" style={{ padding: '1.25rem' }}>
@@ -223,6 +251,62 @@ function AppDetailModal({ app, job, onClose, onStatusChange, onSendMessage }) {
                 <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{job.salary || 'Standard Comp'}</div>
               </div>
             </div>
+
+            {/* Resume Section with download button */}
+            {loadingDetail ? (
+              <div className="card-flat skeleton" style={{ height: '120px' }}></div>
+            ) : detail?.resume ? (
+              <div className="card-flat" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', borderLeft: '4px solid var(--primary)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' }}>Attached Resume</div>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.25rem', fontSize: '0.95rem' }}>📄 {detail.resume.filename || 'resume_document.pdf'}</div>
+                  </div>
+                  {detail.resume.download_url && (
+                    <a 
+                      href={`${API_HOST}${detail.resume.download_url}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn btn-primary"
+                      style={{ padding: '0.5rem 1.25rem', fontSize: '0.8125rem' }}
+                    >
+                      📥 Download Resume
+                    </a>
+                  )}
+                </div>
+
+                {detail.ai_analysis && (
+                  <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                      <span className="badge badge-green" style={{ fontWeight: 700, fontSize: '0.875rem' }}>
+                        Match Score: {detail.ai_analysis.match_score}%
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>CareerPlanet AI Assessed</span>
+                    </div>
+                    {detail.ai_analysis.summary && (
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.75rem', lineHeight: 1.5 }}>
+                        <strong>AI Summary:</strong> {detail.ai_analysis.summary}
+                      </p>
+                    )}
+                    {detail.ai_analysis.missing_skills && (
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.75rem', lineHeight: 1.5 }}>
+                        <strong>Missing Skills:</strong> <span style={{ color: 'var(--accent-amber)' }}>{detail.ai_analysis.missing_skills}</span>
+                      </p>
+                    )}
+                    {detail.ai_analysis.recommendations && (
+                      <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                        <strong>Recommendations:</strong>
+                        <div style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', marginTop: '0.25rem', lineHeight: 1.5 }}>{detail.ai_analysis.recommendations}</div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="card-flat" style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-tertiary)', fontStyle: 'italic' }}>
+                No active resume attached by the candidate.
+              </div>
+            )}
 
             {/* Cover Letter Section */}
             {app.cover_letter ? (
@@ -237,11 +321,11 @@ function AppDetailModal({ app, job, onClose, onStatusChange, onSendMessage }) {
             )}
 
             {/* Send Custom Letter Form */}
-            <form onSubmit={handleSendCustomMessage} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
               <div>
-                <label className="label">Send Custom Message to Candidate</label>
-                <p style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', marginBottom: '0.75rem' }}>This will be delivered to the candidate's inbox.</p>
-                {msgSentSuccess && <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', padding: '0.75rem 1rem', borderRadius: 8, fontSize: '0.875rem', marginBottom: '1rem', border: '1px solid rgba(16, 185, 129, 0.2)' }}>✓ Message dispatched successfully!</div>}
+                <label className="label">Recruiter Response</label>
+                <p style={{ fontSize: '0.8125rem', color: 'var(--text-tertiary)', marginBottom: '0.75rem' }}>Send your response or interview invites to the candidate.</p>
+                {msgSentSuccess && <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', padding: '0.75rem 1rem', borderRadius: 8, fontSize: '0.875rem', marginBottom: '1rem', border: '1px solid rgba(16, 185, 129, 0.2)' }}>✓ Response dispatched successfully!</div>}
                 <textarea 
                   rows={4}
                   value={customMsg}
@@ -251,15 +335,25 @@ function AppDetailModal({ app, job, onClose, onStatusChange, onSendMessage }) {
                   style={{ resize: 'vertical' }}
                 />
               </div>
-              <button 
-                type="submit" 
-                disabled={sendingMsg || !customMsg.trim()}
-                className="btn btn-primary"
-                style={{ alignSelf: 'flex-end' }}
-              >
-                {sendingMsg ? 'Dispatching...' : 'Send Message'}
-              </button>
-            </form>
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                <button 
+                  type="button" 
+                  disabled={sendingMsg || !customMsg.trim()}
+                  onClick={() => handleSendCustomResponse('email')}
+                  className="btn btn-primary"
+                >
+                  ✉️ Send via Email
+                </button>
+                <button 
+                  type="button" 
+                  disabled={sendingMsg || !customMsg.trim()}
+                  onClick={() => handleSendCustomResponse('message')}
+                  className="btn btn-secondary"
+                >
+                  💬 Send via Message
+                </button>
+              </div>
+            </div>
 
           </div>
         </motion.div>

@@ -43,9 +43,9 @@ function ThemeSwitcher() {
         style={{
           display: 'flex', alignItems: 'center', gap: '0.45rem',
           padding: '0.4rem 0.85rem', borderRadius: 'var(--radius-full)',
-          background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.12)',
+          background: 'var(--surface-hover)', border: '1px solid var(--border)',
           cursor: 'pointer', fontSize: '0.8125rem', fontWeight: 700,
-          color: '#ffffff', fontFamily: 'Plus Jakarta Sans, sans-serif',
+          color: 'var(--text-primary)', fontFamily: 'Plus Jakarta Sans, sans-serif',
         }}
       >
         <span style={{ width: 12, height: 12, borderRadius: '50%', background: activeTheme?.color, display: 'inline-block', flexShrink: 0, boxShadow: `0 0 8px ${activeTheme?.color}` }} />
@@ -62,8 +62,8 @@ function ThemeSwitcher() {
             transition={{ duration: 0.15 }}
             style={{
               position: 'absolute', top: 'calc(100% + 0.5rem)', right: 0,
-              background: '#141724', borderRadius: 16, border: '1px solid rgba(255, 255, 255, 0.15)',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.6)', padding: '0.5rem',
+              background: 'var(--surface-2)', borderRadius: 16, border: '1px solid var(--border)',
+              boxShadow: 'var(--shadow-xl)', padding: '0.5rem',
               minWidth: 180, zIndex: 999,
             }}
           >
@@ -75,13 +75,13 @@ function ThemeSwitcher() {
                 style={{
                   display: 'flex', alignItems: 'center', gap: '0.625rem',
                   width: '100%', padding: '0.55rem 0.625rem', borderRadius: 10,
-                  background: current === t.id ? 'rgba(255,255,255,0.08)' : 'transparent',
+                  background: current === t.id ? 'var(--surface-hover)' : 'transparent',
                   border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'Plus Jakarta Sans, sans-serif',
                 }}
               >
                 <span style={{ width: 14, height: 14, borderRadius: '50%', background: t.color, flexShrink: 0, boxShadow: `0 0 6px ${t.color}` }} />
                 <div>
-                  <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: current === t.id ? 'var(--primary)' : '#ffffff' }}>{t.label}</div>
+                  <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: current === t.id ? 'var(--primary)' : 'var(--text-primary)' }}>{t.label}</div>
                   <div style={{ fontSize: '0.6875rem', color: 'var(--text-tertiary)' }}>{t.desc}</div>
                 </div>
                 {current === t.id && <span style={{ marginLeft: 'auto', color: 'var(--primary)', fontSize: '0.875rem', fontWeight: 800 }}>✓</span>}
@@ -134,7 +134,7 @@ export default function Navbar() {
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       style={{
         position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(10, 10, 10, 0.7)',
+        background: 'var(--nav-bg)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
         borderBottom: '1px solid var(--border)',
@@ -150,13 +150,13 @@ export default function Navbar() {
             display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000000', fontWeight: 900, fontSize: '1.05rem',
             boxShadow: 'var(--shadow-glow)'
           }}>C</div>
-          <span style={{ fontWeight: 900, fontSize: '1.2rem', color: '#ffffff', letterSpacing: '-0.02em', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+          <span style={{ fontWeight: 900, fontSize: '1.2rem', color: 'var(--text-primary)', letterSpacing: '-0.02em', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
             Career<span style={{ color: 'var(--primary)' }}>Planet</span>
           </span>
         </Link>
 
         {/* Center Navigation Links */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', background: 'rgba(255, 255, 255, 0.04)', padding: '0.25rem 0.375rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', background: 'var(--surface-hover)', padding: '0.25rem 0.375rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border)' }}>
           {!user || user.role === 'student' ? (
             studentLinks.map(l => (
               <NavLink key={l.to} to={l.to} active={location.pathname === l.to}>{l.label}</NavLink>
@@ -179,8 +179,8 @@ export default function Navbar() {
             <>
               <div style={{
                 display: 'flex', alignItems: 'center', gap: '0.625rem',
-                padding: '0.3rem 0.875rem 0.3rem 0.3rem', background: 'rgba(255, 255, 255, 0.06)',
-                borderRadius: 'var(--radius-full)', border: '1px solid rgba(255, 255, 255, 0.12)'
+                padding: '0.3rem 0.875rem 0.3rem 0.3rem', background: 'var(--surface-hover)',
+                borderRadius: 'var(--radius-full)', border: '1px solid var(--border)'
               }}>
                 {avatarUrl ? (
                   <img
@@ -196,7 +196,7 @@ export default function Navbar() {
                     {user.full_name?.charAt(0).toUpperCase()}
                   </div>
                 )}
-                <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#ffffff' }}>
+                <span style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                   {user.full_name?.split(' ')[0]}
                 </span>
               </div>
@@ -206,7 +206,7 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link to="/login" className="btn btn-ghost btn-sm" style={{ color: '#cbd5e1' }}>Log in</Link>
+              <Link to="/login" className="btn btn-ghost btn-sm" style={{ color: 'var(--text-secondary)' }}>Log in</Link>
               <Link to="/register" className="btn btn-primary btn-sm">Get started</Link>
             </>
           )}

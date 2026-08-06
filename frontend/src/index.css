@@ -30,6 +30,7 @@
 [data-theme="forest"] {
   --bg: #f8fafc;
   --bg-subtle: #ffffff;
+  --nav-bg: rgba(248, 250, 252, 0.85);
   --surface: #ffffff;
   --surface-hover: #f1f5f9;
   --surface-2: #f8fafc;
@@ -144,6 +145,7 @@
 :root {
   --bg: #000000;
   --bg-subtle: #0a0a0a;
+  --nav-bg: rgba(10, 10, 10, 0.7);
   --surface: #121212;
   --surface-hover: #1a1a1a;
   --surface-2: #171717;
@@ -419,7 +421,13 @@ p { color: var(--text-secondary); }
 }
 
 /* Page Layout */
-.page { min-height: calc(100vh - 4rem); padding: 3rem 1rem; }
+.page { 
+  min-height: calc(100vh - 4.25rem); 
+  padding: 3rem 1rem; 
+  background: var(--bg);
+  color: var(--text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
+}
 .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
 .container-sm { max-width: 640px; margin: 0 auto; padding: 0 1rem; }
 .container-md { max-width: 880px; margin: 0 auto; padding: 0 1rem; }
