@@ -1,4 +1,4 @@
-# Career Planet 🚀
+# Career Planet  🚀
 
 An AI-powered job and placement portal built for the **WebVerse Hackathon**.
 Transforming the traditional job application process into an intelligent, seamless, and premium experience.
